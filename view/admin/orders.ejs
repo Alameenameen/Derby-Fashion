@@ -1,0 +1,391 @@
+<%- include("../../view/partials/admin/header") %>
+
+<style>
+    /* Container and Card Styles */
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.card-title {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Table Styles */
+.table-container {
+    overflow-x: auto;
+    padding: 1rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+    background-color: white;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Button Styles */
+.view-address-btn, .save-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.view-address-btn {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+.view-address-btn:hover {
+    background-color: #dee2e6;
+}
+
+.save-btn {
+    background-color: #007bff;
+    color: white;
+    margin-left: 0.5rem;
+}
+
+.save-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Status Select Styles */
+.status-select {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: white;
+    color: #495057;
+    font-size: 0.9rem;
+    min-width: 120px;
+}
+
+/* Status Badge Styles */
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status-pending {
+    background-color: #ffeeba;
+    color: #856404;
+}
+
+.status-processing {
+    background-color: #b8daff;
+    color: #004085;
+}
+
+.status-shipped {
+    background-color: #c3e6cb;
+    color: #155724;
+}
+
+.status-delivered {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-return {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.close-modal {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    color: #adb5bd;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-modal:hover {
+    color: #495057;
+}
+
+.address-details {
+    margin-top: 1rem;
+}
+
+.address-details p {
+    margin: 0.5rem 0;
+    color: #495057;
+}
+
+.address-label {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-right: 0.5rem;
+}
+
+/* Success Message Styles */
+.success-message {
+    display: none;
+    background-color: #d4edda;
+    color: #155724;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .card-header {
+        padding: 1rem;
+    }
+
+    th, td {
+        padding: 0.75rem;
+    }
+
+    .status-select {
+        min-width: 100px;
+    }
+
+    .view-address-btn, .save-btn {
+        padding: 0.4rem 0.8rem;
+    }
+}
+
+/* Customer Info Styles */
+.customer-info {
+    line-height: 1.4;
+}
+
+.customer-info strong {
+    color: #2c3e50;
+}
+
+.customer-email {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+</style>
+<div class="container">
+    <div class="success-message" id="successMessage">
+        Status updated successfully!
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">Order Status Management</h1>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer Details</th>
+                        <th>Shipping Address</th>
+                        <th>Current Status</th>
+                        <th>Update Status</th>
+                        <th>Order Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(order => { %>
+                        <tr>
+                            <td><%= order.orderId || order._id %></td>
+                            <td>
+                                <strong><%= order.user ? order.user.name : 'Guest' %></strong><br>
+                                <%= order.user ? order.user.email : 'N/A' %>
+                            </td>
+                            <td>
+                                <button class="view-address-btn" 
+                                onclick="showAddressDetails('<%= JSON.stringify(order.address).replace(/'/g, '\\\\') %>')">
+                            View Address
+                        </button>
+                        
+                            </td>
+                            <td><%= order.status %></td>
+                            <td>
+                                <select id="status-<%= order._id %>" class="status-select"   <%= order.status === 'cancelled' ? 'disabled' : '' %> >
+                                    <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                    <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>>Processing</option>
+                                    <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                    <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                                    <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                    <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
+                                    <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                </select>
+                                <button class="save-btn" 
+                                        onclick="updateStatus('<%= order._id %>')"  
+                                        <%= order.status === 'cancelled' ? 'disabled' : '' %> >
+                                    Update
+                                </button>
+                            </td>
+                            <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Address Modal -->
+<div id="addressModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeAddressModal()">&times;</span>
+        <h2>Shipping Address Details</h2>
+        <div id="modalAddressContent" class="address-details">
+            <!-- Address details will be populated here -->
+        </div>
+    </div>
+</div>
+
+<script>
+function showAddressDetails(addressData) {
+    try {
+        const address = JSON.parse(addressData);
+        const modalContent = document.getElementById('modalAddressContent');
+        modalContent.innerHTML = `
+            <p><span class="address-label">Name:</span> ${address.name || 'N/A'}</p>
+            <p><span class="address-label">Street:</span> ${address.street || 'N/A'}</p>
+            <p><span class="address-label">City:</span> ${address.city || 'N/A'}</p>
+            <p><span class="address-label">State:</span> ${address.state || 'N/A'}</p>
+            <p><span class="address-label">ZIP Code:</span> ${address.zipCode || 'N/A'}</p>
+            <p><span class="address-label">Phone:</span> ${address.phone || 'N/A'}</p>
+        `;
+
+        const modal = document.getElementById('addressModal');
+        modal.style.display = 'flex';
+    } catch (error) {
+        console.error('Error displaying address:', error);
+        alert('Failed to display address details');
+    }
+}
+
+async function updateStatus(orderId) {
+    const selectElement = document.getElementById(`status-${orderId}`);
+    const newStatus = selectElement.value;
+    
+    try {
+        const response = await fetch(`/admin/orderList/updateStatus/${orderId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+                // Refresh the page to show updated status
+                window.location.reload();
+            }, 1000);
+        } else {
+            throw new Error(data.message || 'Failed to update status');
+        }
+    } catch (error) {
+        console.error('Error updating status:', error);
+        alert('Failed to update order status');
+    }
+}
+
+function closeAddressModal() {
+    const modal = document.getElementById('addressModal');
+    modal.style.display = 'none';
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('addressModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+
+<%- include("../../view/partials/admin/footer") %>

@@ -1,0 +1,132 @@
+<%- include("../../view/partials/admin/header") %>
+<style>
+  .pagination-container {
+    text-align: center;
+  }
+  .pagination {
+    display: inline-block;
+  }
+
+  .pagination a,
+  .pagination .current-page {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 2px;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    color: #333;
+  }
+
+  .pagination a:hover {
+    background-color: #f5f5f5;
+  }
+  .error-message {
+    color: red;
+  }
+</style>
+<section class="content-main">
+    <div class="content-header">
+      <div>
+        <h2 class="content-title card-title">Brands</h2>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3">
+            <form method="POST" action="/admin/addBrand" enctype="multipart/form-data">
+              <div class="mb-4">
+                <label for="brandName" class="form-label">Brand Name</label>
+                <input
+                  type="text"
+                  name="brandName"
+                  id="brandName"
+                  placeholder="Type here"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <label for="brandImage" class="form-label">Brand Image</label>
+              <div class="input-upload">
+                <img src="" alt="" id="imagePreview"/>
+                <input 
+                  class="form-control border" 
+                  name="brandImage" 
+                  id="brandImage"
+                  type="file"
+                  required 
+                />
+              </div>
+              <div class="d-grid">
+                <button class="btn btn-primary mt-20" type="submit">
+                  Add Brand
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="col-md-7 ml-105">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Brand Name</th>
+                    <th>Logo</th>
+                    <th>Created Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% brands.forEach(brand => { %>
+                  <tr>
+                    <td class="text-start"><%= brand.brandName %></td>
+                    <td class="text-start">
+                      <div class="d-flex align-items-center justify-content-center"
+                           style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden;">
+                        <img
+                          src="<%= brand.brandImage[0] %>"
+                          alt="<%= brand.brandName %>"
+                          class="img-fluid rounded-circle"
+                          style="width: 100%; height: auto"
+                        />
+                      </div>
+                    </td>
+                    <td class="text-start">
+                      <%= new Date(brand.createdAt).toLocaleDateString() %>
+                    </td>
+                    <td class="text-start">
+                      <% if (brand.isBlocked) { %>
+                        <span class="badge rounded-pill alert-danger" style="width: 60px">Blocked</span>
+                      <% } else { %>
+                        <span class="badge rounded-pill alert-success" style="width: 60px">Active</span>
+                      <% } %>
+                    </td>
+                    <td class="text-start">
+                      <% if (brand.isBlocked) { %>
+                        <button class="btn btn-success" style="width: 90px">
+                          <a href="/admin/brands/toggle-status/<%= brand._id %>" class="text-white">Unblock</a>
+                        </button>
+                      <% } else { %>
+                        <button class="btn btn-danger" style="width: 90px">
+                          <a href="/admin/brands/toggle-status/<%= brand._id %>" class="text-white">Block</a>
+                        </button>
+                      <% } %>
+                      <button class="btn btn-danger" style="width: 90px">
+                        <a href="/admin/brands/delete/<%= brand._id %>" class="text-white">Delete</a>
+                      </button>
+                    </td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pagination-container">
+      <!-- Your pagination code here -->
+    </div>
+  </section>
+<%- include("../../view/partials/admin/footer") %>
+

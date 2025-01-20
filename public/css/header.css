@@ -1,0 +1,221 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  .img-zoom-container {
+    position: relative;
+  }
+  
+  .img-zoom-lens {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+  }
+  
+  .img-zoom-result {
+    border: 1px solid #d4d4d4;
+    width: 300px;
+    height: 300px;
+    background-repeat: no-repeat;
+    background-size: 600px 600px;
+    position: absolute;
+    top: 0;
+    left: 100%;
+    margin-left: 10px;
+  }
+  
+      
+          
+      .dropdown {
+    position:relative;
+    display: inline-block;
+  }
+  .dropdown-content{
+    display: none;
+    position: absolute;
+    background-color: chocolate;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0,2);
+    z-index: 1000;
+    right: 0;
+  }
+  .dropdown-content a {
+    color: black;
+    padding: 12px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+  }
+  .dropdown-content a:hover{
+    background-color: #f1f1f1;
+  
+  }
+  .dropdown:hover .dropdown-content{
+    display: block;
+  }
+  .header{
+    position: relative;
+    z-index: 500;
+    
+  } 
+   /* Container for the dropdown */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* /* Style for the dropdown link  */
+  .sign-in-link {
+    text-decoration: none;
+    color: #3498db;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .sign-in-link:hover {
+    color: #1d70f2;
+  }
+  
+  /* Dropdown content container */
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #ffffff;
+    min-width: 160px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  /* Style for individual dropdown items */
+  .dropdown-content a {
+    color: #333;
+    padding: 10px 15px;
+    text-decoration: none;
+    display: block;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #f2f2f2;
+    color: #1d70f2;
+  }
+  
+  /* Show dropdown on hover */
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  
+  /* //style of order details page*/
+  
+  
+      .order-details-container {
+          background-color: #f8f9fa;
+          padding: 30px 0;
+      }
+  
+      .order-card {
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          border-radius: 8px;
+          border: none;
+      }
+  
+      .order-header {
+          background: linear-gradient(135deg, #0d6efd, #0a58ca);
+          border-radius: 8px 8px 0 0;
+          padding: 15px 20px;
+      }
+  
+      .order-status {
+          background-color: rgba(255, 255, 255, 0.2);
+          padding: 5px 15px;
+          border-radius: 20px;
+          font-size: 0.9rem;
+      }
+  
+      .progress {
+          height: 30px;
+          border-radius: 15px;
+          background-color: #e9ecef;
+          overflow: hidden;
+      }
+  
+      .progress-bar {
+          background: linear-gradient(135deg, #0d6efd, #0a58ca);
+          transition: width 0.6s ease;
+      }
+  
+      .product-image {
+          border-radius: 8px;
+          border: 1px solid #dee2e6;
+          transition: transform 0.2s;
+      }
+  
+      .product-image:hover {
+          transform: scale(1.05);
+      }
+  
+      .table th {
+          background-color: #f8f9fa;
+          border-bottom: 2px solid #dee2e6;
+      }
+  
+      .order-summary-card {
+          background-color: #f8f9fa;
+          border-radius: 8px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+  
+      .price-item {
+          padding: 8px 0;
+          border-bottom: 1px dashed #dee2e6;
+      }
+  
+      .total-price {
+          font-size: 1.2rem;
+          color: #0d6efd;
+          padding-top: 10px;
+      }
+  
+      .shipping-address {
+          background-color: #fff;
+          padding: 15px;
+          border-radius: 8px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+  
+      .action-button {
+          transition: all 0.3s ease;
+      }
+  
+      .action-button:hover {
+          transform: translateY(-2px);
+      }
+  
+      .cancel-btn {
+          background-color: #dc3545;
+          border: none;
+      }
+  
+      .return-btn {
+          background-color: #ffc107;
+          border: none;
+          color: #000;
+      }
+  
+      .cancel-btn:hover {
+          background-color: #bb2d3b;
+      }
+  
+      .return-btn:hover {
+          background-color: #ffca2c;
+      }
+  

@@ -1,0 +1,268 @@
+<%- include("../../view/partials/user/header") %>
+<div class="container mt-4">
+  <h3 class="mt-3" style="color: #046963; margin-bottom: 70px">
+    Create User Address
+  </h3>
+  <form
+    id="addressForm"
+    method="POST"
+    action="/addAddress"
+    class="border-0 p-3"
+  >
+    <div class="row mb-50">
+      <div class="form-group col-md-4">
+        <label for="addressType">Address Type:</label>
+        <select
+        class="form-control border-3"
+        id="addressType"
+        name="addressType"
+        required
+    >
+        <option value="">Select Address Type</option>
+        <option value="Home">Home</option>
+        <option value="Work">Work</option>
+        <option value="Other">Other</option>
+    </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="name">Name:</label>
+        <input
+          type="text"
+          class="form-control border-3"
+          id="name"
+          name="name"
+          required
+        />
+      </div>
+      <div class="form-group col-md-4">
+        <label for="city">City:</label>
+        <input
+          type="text"
+          class="form-control border-3"
+          id="city"
+          name="city"
+          required
+        />
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="form-group col-md-4">
+        <label for="landMark">Landmark:</label>
+        <input
+          type="text"
+          class="form-control border-3"
+          id="landMark"
+          name="landMark"
+          required
+        />
+      </div>
+      <div class="form-group col-md-4">
+        <label for="state">State:</label>
+        <input
+          type="text"
+          class="form-control border-3"
+          id="state"
+          name="state"
+          required
+        />
+      </div>
+      <div class="form-group col-md-4">
+        <label for="pincode">Pincode:</label>
+        <input
+          type="number"
+          class="form-control border-3"
+          id="pincode"
+          name="pincode"
+          required
+        />
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="form-group col-md-4">
+        <label for="phone">Phone:</label>
+        <input
+          type="number"
+          class="form-control border-3"
+          id="phone"
+          name="phone"
+          required
+        />
+      </div>
+      <div class="form-group col-md-4">
+        <label for="altPhone">Alternate Phone:</label>
+        <input
+          type="number"
+          class="form-control border-3"
+          id="altPhone"
+          name="altPhone"
+          required
+        />
+      </div>
+    </div>
+    <input type="hidden" name="redirectTo" value="<%= redirectTo %>" />
+
+    <button type="submit" id="submitButton" class="btn btn-primary">
+      Submit
+    </button>
+  </form>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  document
+    .getElementById("addressForm")
+    .addEventListener("submit", function (event) {
+      if (!validateForm()) {
+        event.preventDefault();
+      }
+    });
+
+  function validateForm() {
+    let isValid = true;
+    const requiredFields = [
+      "addressType",
+      "name",
+      "city",
+      "landMark",
+      "state",
+      "pincode",
+      "phone",
+      "altPhone",
+    ];
+    requiredFields.forEach(function (field) {
+      const input = document.getElementById(field);
+      const inputValue = input.value.trim();
+      const errorElement = document.getElementById(field + "-error");
+
+      if (inputValue.replace(/\*/g, "").length === 0) {
+        Swal.fire(
+          "Error",
+          `${
+            field.charAt(0).toUpperCase() + field.slice(1)
+          } please select address type.`,
+          "error"
+        );
+        isValid = false;
+        return;
+      }
+
+      if (inputValue === "") {
+        if (!errorElement) {
+          const errorMessage = "This field is required.";
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "text-danger";
+          errorDiv.textContent = errorMessage;
+          errorDiv.id = field + "-error";
+          input.parentNode.appendChild(errorDiv);
+        }
+        isValid = false;
+      } else {
+        if (errorElement) {
+          errorElement.remove();
+        }
+      }
+    });
+
+    const namePattern = /^[A-Za-z\s]+$/;
+    const pincodePattern = /^[0-9]{6}$/; 
+    const phonePattern = /^[6-9]\d{9}$/; 
+    const specialCharPattern = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
+    const name = document.getElementById("name").value;
+    const city = document.getElementById("city").value;
+    const landMark = document.getElementById("landMark").value;
+    const state = document.getElementById("state").value;
+    const pincode = document.getElementById("pincode").value;
+    const phone = document.getElementById("phone").value;
+    const altPhone = document.getElementById("altPhone").value;
+    const addressType = document.getElementById("addressType").value;
+
+
+if (!addressType) {
+    Swal.fire("Error", "Please select an address type.", "error");
+    isValid = false;
+} else if (!['Home', 'Work', 'Other'].includes(addressType)) {
+    Swal.fire("Error", "Invalid address type selected.", "error");
+    isValid = false;
+}
+
+    const fields = [
+      { value: name, name: "Name" },
+      { value: city, name: "City" },
+      { value: landMark, name: "Landmark" },
+      { value: state, name: "State" },
+      { value: addressType, name:"addressType"}
+    ];
+
+    fields.forEach((field) => {
+      if (specialCharPattern.test(field.value)) {
+        Swal.fire(
+          "Error",
+          `${field.name} cannot contain special characters.`,
+          "error"
+          
+        );
+        isValid = false;
+      }
+    });
+
+    if (!namePattern.test(name)) {
+      Swal.fire("Error", "Name should contain alphabets only.", "error");
+      isValid = false;
+    }
+    if (!namePattern.test(city)) {
+      Swal.fire("Error", "City should contain alphabets only.", "error");
+      isValid = false;
+    }
+    if (!namePattern.test(landMark)) {
+      Swal.fire("Error", "Landmark should contain alphabets only.", "error");
+      isValid = false;
+    }
+    if (!namePattern.test(state)) {
+      Swal.fire("Error", "State should contain alphabets only.", "error");
+      isValid = false;
+    }
+
+ if (!pincodePattern.test(pincode)) {
+  Swal.fire("Error", "Pincode should be a 6-digit number.", "error");
+  isValid = false;
+} else if (/^(\d)\1{5}$/.test(pincode)) {
+  Swal.fire("Error", "Pincode cannot have all digits the same.", "error");
+  isValid = false;
+} else if (!/^\d{6}$/.test(pincode)) {
+  Swal.fire("Error", "Pincode must only contain digits, no special characters or alphabets.", "error");
+  isValid = false;
+}
+
+
+    if (!phonePattern.test(phone)) {
+      Swal.fire("Error", 'Please enter a valid 10-digit mobile number starting with 6-9', "error");
+      isValid = false;
+    } else if (/^(.)\1{9}$/.test(phone)) {
+      Swal.fire("Error",'Phone number cannot contain all same digits', "error");
+      isValid = false;
+    }
+
+    if (!phonePattern.test(altPhone)) {
+      Swal.fire(
+        "Error",
+        "Please enter a valid 10-digit mobile number starting with 6-9",
+        "error"
+      );
+      isValid = false;
+    } else if (/^(.)\1{9}$/.test(altPhone)) {
+      Swal.fire("Error", 'Phone number cannot contain all same digits', "error");
+      isValid = false;
+    }
+
+    if (phone === altPhone) {
+      Swal.fire(
+        "Error",
+        "Phone number and alternate phone number should be different.",
+        "error"
+      );
+      isValid = false;
+    }
+    return isValid;
+  }
+</script>
+<%- include("../../view/partials/user/footer") %>

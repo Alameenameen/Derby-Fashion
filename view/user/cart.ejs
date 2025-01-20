@@ -1,0 +1,212 @@
+<%-include("../../view/partials/user/header")%>
+<style>
+    table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    text-align: center; /* Center-align content */
+    vertical-align: middle; /* Ensure all content is vertically aligned */
+    padding: 10px;
+}
+
+table td img {
+    display: block;
+    margin: 0 auto; /* Center the image horizontally */
+    max-width: 50px;
+    height: auto;
+    border-radius: 5px; /* Optional: Rounded corners */
+}
+
+.product-name {
+    display: flex;
+    align-items: center; /* Align the text vertically with the image */
+    gap: 10px; /* Add some space between the image and name */
+}
+
+.product-name img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover; /* Ensure the image maintains its aspect ratio */
+    border-radius: 5px; /* Optional: Rounded corners */
+}
+
+</style>
+
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <!-- Products Table -->
+        <div class="col-lg-8 table-responsive mb-5">
+            <table class="table table-light table-borderless table-hover text-center mb-0">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Products</th>
+                        <th>size</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (cart && cart.items && cart.items.length > 0) { %>
+                        <% cart.items.forEach((item) => { %>
+                            <tr>
+                                <td>
+                                    <!-- Display the first product image or a placeholder if unavailable -->
+                                    <% if (item.productId && item.productId.productImage && item.productId.productImage.length > 0) { %>
+                                        <img src="/uploads/<%= item.productId.productImage[0] %>" 
+                                             style="width: 50px;">
+                                    <% } else { %>
+                                        <img src="/img/placeholder.jpg" 
+                                             alt="Placeholder" 
+                                             style="width: 50px;">
+                                    <% } %>
+                                    <%= item.productId ? item.productId.productName : 'Product Not Found' %> 
+                                </td>
+                                <td>
+                                    <%=item.size%>
+                                </td>
+                                
+
+
+                                <td class="align-middle">$<%= item.price.toFixed(2) %></td>
+                                <td class="align-middle">
+                                    <form action="/cart/update" method="POST" class="d-inline">
+                                        <input type="hidden" name="productId" value="<%= item.productId._id %>">
+                                        <input type="hidden" name="size" value="<%= item.size %>">
+                                        <input type="number" class="form-control form-control-sm" 
+                                               name="quantity" value="<%= item.quantity %>" min="1" max="100"
+                                               style="width: 70px; display: inline-block;">
+                                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                    </form>
+                                </td>
+                                <td class="align-middle">$<%= item.totalPrice.toFixed(2) %></td>
+                                <td class="align-middle">
+                                    <form action="/cart/remove" method="POST" class="d-inline">
+                                        <input type="hidden" name="productId" value="<%= item.productId._id %>">
+                                        <input type="hidden" name="size" value="<%= item.size %>"> 
+                                        <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" class="text-center">Your cart is empty</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cart Summary -->
+        
+<div class="col-lg-4">
+    <form class="mb-30" action="/cart/apply-coupon" method="POST">
+        <div class="input-group">
+            <input type="text" class="form-control border-0 p-4" name="couponCode" placeholder="Coupon Code">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Apply Coupon</button>
+            </div>
+        </div>
+    </form>
+    
+    <h5 class="section-title position-relative text-uppercase mb-3">
+        <span class="bg-secondary pr-3">Cart Summary</span>
+    </h5>
+    
+    <div class="bg-light p-30 mb-5">
+        <div class="border-bottom pb-2">
+            <div class="d-flex justify-content-between mb-3">
+                <h6>Subtotal</h6>
+                <h6>$<%= totals.subtotal.toFixed(2) %></h6>
+            </div>
+            <div class="d-flex justify-content-between">
+                <h6 class="font-weight-medium">Shipping</h6>
+                <h6 class="font-weight-medium">$<%= totals.shipping.toFixed(2) %></h6>
+            </div>
+        </div>
+        <div class="pt-2">
+            <div class="d-flex justify-content-between mt-2">
+                <h5>Total</h5>
+                <h5>$<%= totals.total.toFixed(2) %></h5>
+            </div>
+            <% if (cart && cart.items && cart.items.length > 0) { %>
+                <a href="/checkout" class="btn btn-block btn-primary font-weight-bold my-3 py-3">
+                    Proceed To Checkout
+                </a>
+            <% } else { %>
+                <button class="btn btn-block btn-secondary font-weight-bold my-3 py-3" disabled>
+                    Cart is Empty
+                </button>
+            <% } %>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addToCartForm = document.getElementById('addToCartForm');
+        const sizeInputs = document.querySelectorAll('input[name="size"]');
+        const addToCartButton = document.querySelector('.add-to-cart-btn');
+    
+
+        
+        // Enable/disable add to cart button based on size selection
+        sizeInputs.forEach(input => {
+            input.addEventListener('change', function() {
+                const selectedQuantity = parseInt(this.dataset.quantity);
+                addToCartButton.disabled = selectedQuantity === 0;
+                
+                if (selectedQuantity === 0) {
+                    addToCartButton.textContent = 'Out of Stock';
+                } else {
+                    addToCartButton.textContent = 'Add to Cart';
+                }
+            });
+        });
+    
+        // Handle form submission
+        addToCartForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const selectedSize = document.querySelector('input[name="size"]:checked');
+            if (!selectedSize) {
+                alert('Please select a size');
+                return;
+            }
+    
+            const formData = new FormData(this);
+            formData.append('size', selectedSize.value);
+    
+            // Submit the form with the selected size
+            fetch('/add-to-cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    productId: formData.get('productId'),
+                    quantity: formData.get('quantity'),
+                    size: formData.get('size')
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    window.location.href = '/cart';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to add item to cart');
+            });
+        });
+    });
+    </script>
+<%-include("../../view/partials/user/footer")%>

@@ -1,0 +1,680 @@
+<%- include("../../view/partials/user/header") %>
+<style>
+  /* General Page Styling */
+  .main {
+    background: linear-gradient(to right, #f9f9f9, #ffffff);
+    min-height: 100vh;
+    padding: 30px 0;
+  }
+
+  /* Breadcrumb Section */
+  .breadcrumb-wrap {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .breadcrumb a {
+    color: #FFC800;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .breadcrumb span {
+    margin: 0 5px;
+    color: #6c757d;
+  }
+
+  /* Sidebar Menu */
+  .dashboard-menu {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .dashboard-menu .nav-link {
+    font-size: 16px;
+    color: #3D464D;
+    margin-bottom: 8px;
+    padding: 12px 15px;
+    border-radius: 6px;
+    transition: all 0.3s;
+  }
+
+  .dashboard-menu .nav-link.active {
+    background: linear-gradient(to right, #3D464D, #FFC800);
+    color: #ffffff;
+  }
+
+  .dashboard-menu .nav-link:hover {
+    background: green;
+  }
+
+  /* Tab Content Cards */
+  .dashboard-content .card {
+    border: none;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+
+  .dashboard-content .card-header {
+    background: linear-gradient(to right, #3D464D, #FFC800);
+    color: #ffffff;
+    padding: 15px;
+    border-radius: 10px 10px 0 0;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  .dashboard-content .card-body {
+    padding: 20px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #495057;
+  }
+
+  /* Buttons */
+  .btn {
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    transition: all 0.3s;
+  }
+
+  .btn-success {
+    background: linear-gradient(to right, #FFC800, #3D464D);
+    color: #ffffff;
+  }
+
+  .btn-primary {
+    background: linear-gradient(to right, #FFC800, #3D464D);
+    color: #ffffff;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Table */
+  .table {
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+
+  .table thead th {
+    background: #3D464D;
+    color: #ffffff;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+  }
+
+  .table tbody tr {
+    border-bottom: 1px solid #ddd;
+  }
+
+  .table tbody tr:hover {
+    background: #f8f9fa;
+  }
+
+  /* Wallet Section */
+  #track-orders .form-group label {
+    font-size: 16px;
+    color: #3D464D;
+  }
+
+  #track-orders .form-group .h3 {
+    font-weight: bold;
+    color: #FFC800;
+    margin-bottom: 15px;
+  }
+
+  #track-orders .btn-success {
+    background: linear-gradient(to right, #FFC800, #3D464D);
+    color: #ffffff;
+  }
+
+
+  /* Referral Section */
+  #referal .card-body h6 {
+    color: #FFC800;
+    font-weight: bold;
+  }
+
+  #referal .card-body p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  #referal .card-body strong {
+    color: #3D464D;
+    font-weight: bold;
+  }
+  .text-danger {
+    color: #dc3545;
+    font-size: 14px;
+}
+
+.text-success {
+    color: #28a745;
+    font-size: 14px;
+}
+
+.mb-2 {
+    margin-bottom: 0.5rem;
+}
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+    display: none;
+    margin-top: 5px;
+}
+
+.success-message {
+    color: #28a745;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+</style>
+
+
+
+<main class="main">
+ <div class="page-header breadcrumb-wrap mb-3">
+   <div class="container">
+     <div class="breadcrumb">
+       <a href="#" rel="nofollow">Home</a>
+       <span></span> Profile <span></span> Account
+     </div>
+   </div>
+ </div>
+  <section class="pt-10 pb-10">
+   <div class="container">
+     <div class="row">
+       <div class="col-lg-10 m-auto">
+         <div class="row">
+           <div class="col-md-4">
+             <div class="dashboard-menu">
+               <ul class="nav flex-column" role="tablist">
+                 <li class="nav-item">
+                   <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false">
+                     <i class="fi-rs-settings-sliders mr-10"></i>Dashboard
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="true">
+                     <i class="fi-rs-marker mr-10"></i>My Address
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false">
+                     <i class="fi-rs-shopping-bag mr-10"></i>Orders
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false">
+                     <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet Status
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#wallet-history" role="tab" aria-controls="track-orders" aria-selected="false">
+                     <i class="fi-rs-shopping-cart-check mr-10"></i>Wallet History
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#referal" role="tab" aria-controls="track-orders" aria-selected="false">
+                     <i class="fi-rs-shopping-cart-check mr-10"></i>Referals
+                   </a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link" href="/logout">
+                     <i class="fi-rs-sign-out mr-10"></i>Logout
+                   </a>
+                 </li>
+               </ul>
+             </div>
+           </div>
+           <div class="col-md-8">
+             <div class="tab-content dashboard-content">
+
+
+               <div class="tab-pane fade show active" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+                 <div class="card card-green">
+                   <div class="card-header">
+                     <h5 class="mb-0 text-center">User Profile</h5>
+                    
+
+                   </div>
+                   <div class="card-body text-center">
+                     <h5 class="card-title"><%=user.name%></h5>
+                     <p class="card-text">
+                       <strong>Phone:<%=user.phone%></strong>
+                     </p>
+                     <p class="card-text">
+                       <strong>Email:<%=user.email%></strong>
+                     </p>
+
+                     <button type="button" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#editProfileModal">
+                      Edit Profile
+                  </button>
+                     <!-- <a href="" class="btn btn-sm btn-success ml-2">Change Email</a> -->
+                     <a href="/change-password" class="btn btn-sm btn-success">Change Password</a>
+                   </div>
+                 </div>
+               </div>
+
+               <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+
+                      <form action="/edit-profile" method="POST" id="editProfileForm">
+                        <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" value="<%= user.name %>">
+                            <span id="nameError" class="error-message"></span>
+                        </div>
+                    
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="text" id="phone" name="phone" value="<%= user.phone %>">
+                            <span id="phoneError" class="error-message"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit">Update Profile</button>
+                        </div>
+
+                    </form>
+                      
+                    </div>
+                </div>
+            </div>
+
+               <div
+                 class="tab-pane fade"
+                 id="address"
+                 role="tabpanel"
+                 aria-labelledby="address-tab"
+               >
+                 <div class="row">
+                  <%if(userAddress){%>
+                      <%userAddress.address.forEach((address)=>{%>
+                
+                   <div class="col-lg-6">
+                     <div class="card mb-3 mb-lg-0">
+                       <div class="card-header">
+                         <h5 class="mb-0"><%=address.addressType%></h5>
+                       </div>
+
+
+                       <div class="card-body">
+                        <address>
+                          <%= address.name %><br />
+                          <%= address.city %><br />
+                          <%= address.landMark %><br />
+                          <%= address.state %><br />
+                        </address>
+                         <p>
+                          <%=address.pincode%><br>
+                          <%=address.phone%><br>
+                          <%=address.altPhone%>
+                         </p>
+                      
+                         <div class="d-flex justify-content-between">
+                           <a href="/editAddress?id=<%=address._id%>" class="btn-small">Edit</a>
+                           <a href="/deleteAddress?id=<%=address._id%>" class="btn-small" onclick="return confirm('Are you sure you want to delete this address')">Delete</a>
+                         </div>
+                        
+                       </div>
+                     </div>
+                   </div>
+                <%})}else{%>
+
+                   <div class="col-lg-6">
+                     <div class="card mb-3 mb-lg-0">
+                       <div class="card-header">
+                         <h5 class="mb-0"></h5>
+                       </div>
+                       <div class="card-body">
+                         <address>No address</address>
+                       </div>
+                     </div>
+                   </div>
+              <%}%>
+                   <div>
+                     
+                       <button class="btn btn-primary w-70">
+                        <a href="/addAddress?redirectTo=profile">
+                         Add address
+                         </a>
+                       </button>
+                     </a>
+                   </div>
+                 </div>
+               </div>
+
+
+    <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Your Orders</h5>
+        </div>
+        <div class="card-body">
+    <% if (orders && orders.length > 0) { %>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach(order => { %>
+                        <tr>
+                            <td>#<%= order._id.toString().slice(-6) %></td>
+                            <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                            <td>₹<%= order.finalAmount %></td>
+                            <td><%= order.PaymentMethod %></td>
+                            <td>
+                                <span class="badge <%= getStatusClass(order.status) %>">
+                                    <%= order.status %>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="/order/success/<%= order._id %>" class="btn btn-sm btn-primary">View</a>
+                                
+                                <% if (order.status === 'pending') { %>
+                                    <button onclick="cancelOrder('<%= order._id %>')" 
+                                            class="btn btn-sm btn-outline-danger ms-2">
+                                        Cancel
+                                    </button>
+                                <% } %>
+                                
+                                <% if (order.status === 'delivered') { %>
+                                    <button onclick="returnOrder('<%= order._id %>')" 
+                                            class="btn btn-sm btn-outline-warning ms-2">
+                                        Return
+                                    </button>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    <% } else { %>
+        <div class="text-center py-4">
+            <div class="mb-3">
+                <i class="fas fa-shopping-bag fa-3x text-muted"></i>
+            </div>
+            <h6 class="text-muted">No orders found</h6>
+            <a href="/shop" class="btn btn-primary mt-3">Start Shopping</a>
+        </div>
+    <% } %>
+</div>
+    </div>
+</div>
+
+
+
+               <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
+                 <div class="card">
+                   <div class="card-header">
+                     <h5 class="mb-0">Wallet</h5>
+                   </div>
+                   <div class="card-body contact-from-area">
+                     <div class="row">
+                       <div class="col-lg-8 mx-auto text-center mt-90">
+                         <form>
+                           <div class="form-group">
+                             <label for="walletAmount" class="h4">Amount</label>
+                             <div class="h3"></div>
+                           </div>
+                           <button type="button" class="btn btn-success" onclick="">Add Money</button>
+                         </form>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+
+
+               <div class="tab-pane fade" id="wallet-history" role="tabpanel" aria-labelledby="orders-tab">
+                 <div class="card">
+                   <div class="card-header">
+                     <h5 class="mb-0">Wallet History</h5>
+                   </div>
+                   <div class="card-body">
+                     <div class="table-responsive">
+                       <table class="table">
+                         <thead>
+                           <tr>
+                             <th>Date</th>
+                             <th>Status</th>
+                             <th>Amount</th>
+                           </tr>
+                         </thead>
+                         <tbody>
+                           <tr>
+                             <td></td>
+                             <td></td>
+                             <td></td>
+                           </tr>
+                         </tbody>
+                       </table>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+
+
+               <div class="tab-pane fade" id="referal" role="tabpanel" aria-labelledby="track-orders-tab">
+                 <div class="card">
+                   <div class="card-header">
+                     <h5 class="mb-0">Referal</h5>
+                   </div>
+                   <div class="card-body">
+                     <h6 class="mb-3">Refer your friends and earn money!</h6>
+                     <p>Share this link: <strong>></strong></p>
+                     <p>Earned: ₹</p>
+                   </div>
+                 </div>
+               </div>
+       </div>
+     </div>
+   </div>
+ </section>
+</main>
+<script>
+  function getStatusClass(status) {
+      switch(status.toLowerCase()) {
+          case 'pending':
+              return 'bg-warning';
+          case 'processing':
+              return 'bg-info';
+          case 'shipped':
+              return 'bg-primary';
+          case 'delivered':
+              return 'bg-success';
+          case 'cancelled':
+              return 'bg-danger';
+          case 'return request':
+              return 'bg-secondary';
+          case 'returned':
+              return 'bg-dark';
+          default:
+              return 'bg-secondary';
+      }
+  }
+  
+  function initiateReturn(orderId) {
+      if (confirm('Are you sure you want to return this order?')) {
+          fetch(`/order/return/${orderId}`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  window.location.reload();
+              } else {
+                  alert(data.message || 'Error processing return');
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert('Error processing return');
+          });
+      }
+  }
+  
+  function cancelOrder(orderId) {
+      if (confirm('Are you sure you want to cancel this order?')) {
+          fetch(`/order/cancel/${orderId}`, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              }
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  window.location.reload();
+              } else {
+                  alert(data.message || 'Error cancelling order');
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              alert('Error cancelling order');
+          });
+      }
+  }
+
+
+// document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+//     e.preventDefault();
+    
+//     const name = document.getElementById('name').value.trim();
+//     const phone = document.getElementById('phone').value.trim();
+    
+//     // Clear previous error messages
+//     clearErrors();
+    
+//     let isValid = true;
+    
+//     // Name validation
+//     if (!/^[A-Za-z\s]{3,50}$/.test(name)) {
+//         showError('nameError', 'Name should only contain letters and spaces, between 3 to 50 characters');
+//         isValid = false;
+//     }
+    
+//     // Phone validation
+//     if (!/^[6-9]\d{9}$/.test(phone)) {
+//         showError('phoneError', 'Please enter a valid 10-digit mobile number starting with 6-9');
+//         isValid = false;
+//     } else if (/^(.)\1{9}$/.test(phone)) {
+//         showError('phoneError', 'Phone number cannot contain all same digits');
+//         isValid = false;
+//     }
+    
+//     // If all validations pass, submit the form
+//     if (isValid) {
+//         this.submit();
+//     }
+// });
+
+// function showError(elementId, message) {
+//     const errorElement = document.getElementById(elementId);
+//     if (errorElement) {
+//         errorElement.textContent = message;
+//         errorElement.style.display = 'block';
+//     }
+// }
+
+// function clearErrors() {
+//     const errorElements = document.querySelectorAll('.error-message');
+//     errorElements.forEach(element => {
+//         element.textContent = '';
+//         element.style.display = 'none';
+//     });
+// }                  
+document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // Clear previous errors
+    document.querySelectorAll('.error-message').forEach(el => {
+        el.style.display = 'none';
+        el.textContent = '';
+    });
+
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim()
+    };
+
+    try {
+        const response = await fetch('/edit-Profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (result.status) {
+            // Success
+            window.location.reload();
+        } else {
+            // Show error
+            if (result.field) {
+                const errorElement = document.getElementById(`${result.field}Error`);
+                if (errorElement) {
+                    errorElement.textContent = result.message;
+                    errorElement.style.display = 'block';
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+ 
+ </script>
+  
+<%- include("../../view/partials/user/footer") %>
+
+
+
+
+

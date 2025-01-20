@@ -1,0 +1,609 @@
+<%- include("../../view/partials/admin/header") %>
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" rel="stylesheet">
+</head>
+<style>
+   .error-message {
+       color: red;
+   }
+
+   .thumbnails-container {
+       display: flex;
+       overflow-x: auto;
+   }
+
+   .thumbnail {
+       margin-right: 10px;
+   }
+
+   .crop-container {
+       max-width: 300px;
+       margin: 15px 0;
+   }
+
+   .croppie-wrapper {
+       height: 300px;
+   }
+
+   #images-container {
+       margin-top: 20px;
+   }
+</style>
+
+<section class="content-main">
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Edit Product</h2>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form method="post" action="/admin/editProduct/<%= product._id %>" enctype="multipart/form-data" onsubmit="return validateEditForm()">
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Product Name</label>
+                            <input type="text" name="productName" value="<%= product.productName %>" class="form-control border" id="product_name" required>
+                            <div id="productName-error" class="error-message"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Full Description</label>
+                            <textarea name="description" class="form-control border" rows="4" required><%= product.description ? product.description.replace(/</g, "&lt;").replace(/>/g, "&gt;") : '' %></textarea>
+                            <div id="description-error" class="error-message"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Brand</label>
+                            <select class="form-select border" name="brand" required>
+                                <option value="">Select Brand</option>
+                                <% brands.forEach(brand => { %>
+                                    <% if (!brand.isBlocked) { %>
+                                        <option value="<%= brand._id %>" <%= product.brand.equals(brand._id) ? 'selected' : '' %>><%= brand.brandName %></option>
+                                    <% } %>
+                                <% }); %>
+                            </select>
+                            <div id="brand-error" class="error-message"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-4 mb-4">
+                                <label class="form-label">Regular Price</label>
+                                <input placeholder="₹" name="regularPrice" type="number" value="<%= product.regularPrice %>" class="form-control border" required>
+                                <div id="regularPrice-error" class="error-message"></div>
+                            </div>
+                            <div class="col-lg-4 mb-4">
+                                <label class="form-label">Sale Price</label>
+                                <input placeholder="₹" name="salePrice" type="number" value="<%= product.salePrice %>" class="form-control border">
+                                <div id="salePrice-error" class="error-message"></div>
+                            </div>
+                        </div>
+
+                        <!-- <div class="col-lg-4 mb-4">
+                            <label class="form-label">Color</label>
+                            <input name="color" type="text" value="<%= product.color %>" class="form-control border">
+                            <div id="color-error" class="error-message"></div>
+                        </div> -->
+
+                        <div class="mb-4">
+                            <label class="form-label">Category</label>
+                            <select class="form-select border" name="category" id="categorySelect" required onchange="updateSizes()">
+                                <% cat.forEach(c => { %>
+                                    <option value="<%= c.name %>" data-type="<%= c.type %>" <%= product.category.equals(c._id) ? 'selected' : '' %>><%= c.name %></option>
+                                <% }); %>
+                            </select>
+                            <div id="category-error" class="error-message"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Sizes and Quantities</label>
+                            <div id="sizesContainer">
+                                <!-- Size inputs will be dynamically added here -->
+                            </div>
+                            <div id="size-error" class="error-message"></div>
+                        </div>
+
+                        <div class="card mb-2">
+                            <div class="card-header">
+                                <h4>Current Product Images</h4>
+                            </div>
+                            <div class="row">
+                                <% product.productImage.forEach((image, index) => { %>
+                                    <div class="col-md-3 mb-3" data-image="<%= image %>">
+                                        <div class="position-relative">
+                                            <img src="/uploads/<%= image %>" class="img-fluid" alt="Product Image">
+                                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0" 
+                                                    onclick="deleteImage('<%= image %>', '<%= product._id %>')">×</button>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        </div>
+
+                        <div class="card mb-2">
+                            <div class="card-header">
+                                <h4>Add New Images</h4>
+                            </div>
+                            <div class="row">
+                                <div class="card-body align-items-center mb-3">
+                                    <label class="form-label">Product Images</label>
+                                    <input class="form-control" type="file" name="images" id="imageInput" accept="image/*" onchange="handleImageSelect(event)">
+                                    <div id="images-preview-section">
+                                        <!-- This will contain all image containers -->
+                                    </div>
+                                    <div class="error-message" id="images-error" style="color: red; display: none;"></div>
+
+                                    <button type="button" class="btn btn-primary mt-3" onclick="addMoreImages()">Add More Images</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button class="btn btn-md rounded font-sm hover-up" type="submit">Update Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
+
+<script>
+const croppies = {};
+let currentImageCount = 0;
+const MAX_IMAGES = 4;
+
+
+
+
+function initializeSizes(existingSizes) {
+    // Wait for categorySelect to be available
+    const categorySelect = document.getElementById('categorySelect');
+    if (!categorySelect) return;
+
+    // Trigger updateSizes to create the size inputs
+    updateSizes();
+
+    // Now set the values from existingSizes
+    if (existingSizes && existingSizes.length > 0) {
+        existingSizes.forEach(sizeData => {
+            const input = document.querySelector(`.size-quantity[data-size="${sizeData.size}"]`);
+            if (input) {
+                input.value = sizeData.quantity;
+            }
+        });
+    }
+
+    // Update the hidden input with the current sizes
+    updateSizesArray();
+}
+
+// Make sure this runs after DOM is loaded
+
+// Load existing sizes on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const existingSizes = <%- JSON.stringify(product.sizes) %>;
+    initializeSizes(existingSizes);
+    updateSizes(); // This will set up the size inputs based on the category
+});
+
+function handleImageSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const totalImages = currentImageCount + document.querySelectorAll('.current-image').length;
+        if (totalImages >= MAX_IMAGES) {
+            alert(`Maximum ${MAX_IMAGES} images allowed`);
+            return;
+        }
+        
+        currentImageCount++;
+        const index = currentImageCount;
+        
+        const imageContainer = createImageContainer(index);
+        document.getElementById('images-preview-section').appendChild(imageContainer);
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            viewImage(e, index);
+        };
+        reader.readAsDataURL(file);
+        
+        event.target.value = '';
+    }
+}
+
+function createImageContainer(index) {
+    const container = document.createElement('div');
+    container.className = 'mb-4';
+    container.id = `image-section-${index}`;
+    
+    container.innerHTML = `
+        <div id="crop-container${index}" class="crop-container" style="display: none;">
+            <div id="croppie${index}" class="croppie-wrapper"></div>
+            <button type="button" class="btn btn-sm btn-primary mt-3" onclick="saveImage('${index}')">Save</button>
+        </div>
+        <div id="image-preview${index}"></div>
+    `;
+    
+    return container;
+}
+
+function viewImage(event, index) {
+    const imageData = event.target.result;
+    const cropContainer = document.getElementById(`crop-container${index}`);
+    const croppieElement = document.getElementById(`croppie${index}`);
+
+    if (croppies[index]) {
+        croppies[index].destroy();
+    }
+
+    cropContainer.style.display = 'block';
+
+    croppies[index] = new Croppie(croppieElement, {
+        viewport: { width: 150, height: 150, type: 'square' },
+        boundary: { width: 250, height: 250 },
+        showZoomer: true,
+        enableOrientation: true,
+    });
+
+    croppies[index].bind({
+        url: imageData,
+    });
+}
+
+function saveImage(index) {
+    if (croppies[index]) {
+        croppies[index]
+            .result({
+                type: 'base64',
+                format: 'png',
+            })
+            .then((base64) => {
+                const timestamp = Date.now();
+                const renamedFile = `cropped-img-${timestamp}-${index}.png`;
+
+                const hiddenInputId = `croppedImage${index}`;
+                let hiddenInput = document.getElementById(hiddenInputId);
+
+                if (!hiddenInput) {
+                    hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'croppedImages[]';
+                    hiddenInput.id = hiddenInputId;
+                    document.querySelector('form').appendChild(hiddenInput);
+                }
+
+                hiddenInput.value = base64;
+
+                const previewContainer = document.getElementById(`image-preview${index}`);
+                previewContainer.innerHTML = '';
+                
+                const previewWrapper = document.createElement('div');
+                previewWrapper.className = 'd-flex align-items-center gap-2 mt-3';
+                
+                const img = document.createElement('img');
+                img.src = base64;
+                img.alt = renamedFile;
+                img.style.width = '100px';
+                img.style.height = '100px';
+                img.style.objectFit = 'cover';
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.type = 'button';
+                deleteBtn.className = 'btn btn-sm btn-danger';
+                deleteBtn.innerHTML = '×';
+                deleteBtn.onclick = () => deleteImage(index);
+                
+                previewWrapper.appendChild(img);
+                previewWrapper.appendChild(deleteBtn);
+                previewContainer.appendChild(previewWrapper);
+
+                document.getElementById(`crop-container${index}`).style.display = 'none';
+                croppies[index].destroy();
+                croppies[index] = null;
+            });
+    }
+}
+
+function deleteImage(imageName) {
+    fetch('/admin/deleteImage', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            imageNameToServer: imageName,
+            productIdToServer: '<%= product._id %>'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status) {
+            document.querySelector(`[data-image="${imageName}"]`).remove();
+        }
+    });
+}
+
+
+function addMoreImages() {
+    const totalImages = currentImageCount + document.querySelectorAll('.current-image').length;
+    if (totalImages >= MAX_IMAGES) {
+        alert(`Maximum ${MAX_IMAGES} images allowed`);
+        return;
+    }
+    document.getElementById('imageInput').click();
+}
+
+function updateSizes() {
+    const categorySelect = document.getElementById('categorySelect');
+    const selectedOption = categorySelect.options[categorySelect.selectedIndex];
+    const categoryType = selectedOption.getAttribute('data-type');
+    const sizesContainer = document.getElementById('sizesContainer');
+    sizesContainer.innerHTML = '';
+
+    let sizes = [];
+    if (categoryType === 'Clothing') {
+        sizes = ['S', 'M', 'L', 'XL', 'XXL'];
+    } else if (categoryType === 'Footwear') {
+        sizes = ['5', '6', '7', '8', '9', '10'];
+    }
+
+    let sizesArrayInput = document.getElementById('sizesArrayInput');
+    if (!sizesArrayInput) {
+        sizesArrayInput = document.createElement('input');
+        sizesArrayInput.type = 'hidden';
+        sizesArrayInput.id = 'sizesArrayInput';
+        sizesArrayInput.name = 'sizes';
+        document.querySelector('form').appendChild(sizesArrayInput);
+    }
+
+    // Get existing quantities from the product data
+    const existingSizes = <%- JSON.stringify(product.sizes) %>;
+    
+    sizes.forEach(size => {
+        const existingSize = existingSizes.find(s => s.size === size);
+        const quantity = existingSize ? existingSize.quantity : 0;
+        
+        const sizeDiv = document.createElement('div');
+        sizeDiv.className = 'row mb-2';
+        sizeDiv.innerHTML = `
+            <div class="col-md-2">
+                <label class="form-label">Size ${size}</label>
+            </div>
+            <div class="col-md-4">
+                <input type="number" 
+                       class="form-control border size-quantity" 
+                       data-size="${size}"
+                       placeholder="Quantity for size ${size}" 
+                       min="0" 
+                       value="${quantity}"
+                       onchange="updateSizesArray()">
+            </div>
+        `;
+        sizesContainer.appendChild(sizeDiv);
+    });
+
+    // updateSizesArray();
+}
+
+function updateSizesArray() {
+    const sizeInputs = document.querySelectorAll('.size-quantity');
+    const sizesArray = [];
+
+    sizeInputs.forEach(input => {
+        const quantity = parseInt(input.value) || 0;
+        const size = input.getAttribute('data-size');
+        
+        if (quantity > 0) {
+            sizesArray.push({
+                size: size,
+                quantity: quantity
+            });
+        }
+    });
+
+    const sizesArrayInput = document.getElementById('sizesArrayInput');
+    sizesArrayInput.value = JSON.stringify(sizesArray);
+}
+
+// function validateForm() {
+//    let imageDatas = false
+//            console.log("validate form");
+//            clearErrorMessages();
+//            const name = document.getElementsByName('productName')[0].value;
+//            const description = document.getElementsByName('description')[0].value;
+//            const brand = document.getElementsByName('brand')[0].value;
+//            const price = document.getElementsByName('regularPrice')[0].value;
+//            const saleprice = document.getElementsByName('salePrice')[0].value;
+//            const color = document.getElementsByName('color')[0].value;
+//            const category = document.getElementsByName('category')[0].value;
+//            const images = document.getElementById('input1')
+//            const quantity=document.getElementsByName('quantity')
+// imageDatas = document.getElementById("imageDatas")?.value;
+//            let isValid = true;    
+//            if (name.trim() === "") {
+//    displayErrorMessage('productName-error', 'Please enter a product name.');
+//    isValid = false;
+// }
+          
+// console.log("description new", description)
+
+//            if (description=== '') {
+//                displayErrorMessage('description-error', 'Please enter a product description.');
+//                isValid = false;
+//            } 
+
+
+//            if ( parseInt(quantity) < 0) {
+//                displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
+//                isValid = false;
+//            }
+
+
+
+
+//            if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
+//                displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
+//                isValid = false;
+//            }
+//           if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
+//                displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
+//                isValid = false;
+//            }
+          
+//            if (!imageDatas && images.files.length === 0) {
+//                displayErrorMessage("images-error",'Please select an image.');
+//                isValid = false;
+//            }
+//            return isValid;
+//        }
+      
+//        function displayErrorMessage(elementId, message) {
+//            var errorElement = document.getElementById(elementId);
+//            errorElement.innerText = message;
+//            errorElement.style.display = "block";
+//        }
+
+
+//        function clearErrorMessages() {
+//            const errorElements = document.getElementsByClassName('error-message');
+//            Array.from(errorElements).forEach(element => {
+//                element.innerText = '';
+//            });
+//            const errorMessage = document.getElementById('errorMessage');
+
+
+//        }
+
+
+
+function validateEditForm() {
+    clearErrorMessages();
+    let isValid = true;
+
+    // Get form elements
+    const name = document.getElementsByName('productName')[0]?.value || '';
+    // const description = document.getElementsByName('description')[0]?.value || '';
+    const brand = document.getElementsByName('brand')[0]?.value || '';
+    const price = document.getElementsByName('regularPrice')[0]?.value || '';
+    const saleprice = document.getElementsByName('salePrice')[0]?.value || '';
+    const category = document.getElementsByName('category')[0]?.value || '';
+    const status = document.getElementsByName('status')[0]?.value;
+    // const croppedImageInputs = document.querySelectorAll('input[name="croppedImages"]');
+    const getActualLength = (str) => str.replace(/\s/g, '').length;
+
+
+    const descriptionElement = document.querySelector('textarea[name="description"]');
+    const description = descriptionElement ? descriptionElement.value : '';
+
+    // Validate product name
+    if (name.trim() === "") {
+        displayErrorMessage('productName-error', 'Please enter a product name.');
+        isValid = false;
+    } else if (!/^[a-zA-Z0-9\s-]+$/.test(name.trim())) {
+        displayErrorMessage('productName-error', 'Product name can only contain letters, numbers, spaces, and hyphens.');
+        isValid = false;
+    } else if (getActualLength(name) < 3) {
+        displayErrorMessage('productName-error', 'Product name must contain at least 3 letters/numbers (spaces not counted).');
+        isValid = false;
+    }
+
+    // Validate description
+    if (!description || description.trim() === "") {
+        displayErrorMessage('description-error', 'Please enter a product description.');
+        isValid = false;
+    } else if (getActualLength(description) < 10) {
+        displayErrorMessage('description-error', 'Description must contain at least 10 letters (spaces not counted).');
+        isValid = false;
+    }
+
+    // Validate brand
+    if (brand.trim() === "") {
+        displayErrorMessage('brand-error', 'Please enter a brand name.');
+        isValid = false;
+    }
+
+    // Validate regular price
+    if (!price || !/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) <= 0) {
+        displayErrorMessage('regularPrice-error', 'Please enter a valid positive price.');
+        isValid = false;
+    }
+
+    // Validate sale price
+    if (saleprice !== '') {
+        if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) <= 0) {
+            displayErrorMessage('salePrice-error', 'Please enter a valid positive sale price.');
+            isValid = false;
+        } else if (parseFloat(saleprice) >= parseFloat(price)) {
+            displayErrorMessage('salePrice-error', 'Sale price must be less than regular price.');
+            isValid = false;
+        }
+    }
+
+    // Validate category
+    if (!category || category.trim() === "") {
+        displayErrorMessage('category-error', 'Please select a category.');
+        isValid = false;
+    }
+
+    // Validate status
+    if (status !== undefined) {
+        const validStatuses = ['inStock', 'outOfStock', 'Discontinued', 'Available'];
+        if (status.trim() === "") {
+            displayErrorMessage('status-error', 'Please select a status.');
+            isValid = false;
+        } else if (!validStatuses.includes(status)) {
+            displayErrorMessage('status-error', 'Invalid status value selected.');
+            isValid = false;
+        }
+    }
+
+    // Validate images (Optional: Allow no images for edit if existing ones are retained)
+    // if (croppedImageInputs.length === 0) {
+    //     displayErrorMessage('images-error', 'Please upload at least one image for the product.');
+    //     isValid = false;
+    // }
+
+    // Validate sizes
+    const sizeInputs = document.querySelectorAll('.size-quantity');
+    let totalQuantity = 0;
+
+    sizeInputs.forEach(input => {
+        const quantity = parseInt(input.value) || 0;
+        if (quantity < 0) {
+            displayErrorMessage('size-error', 'Quantities cannot be negative.');
+            isValid = false;
+        }
+        totalQuantity += quantity;
+    });
+
+    if (totalQuantity === 0) {
+        displayErrorMessage('size-error', 'At least one size must have a quantity greater than 0.');
+        isValid = false;
+    }
+
+    // Update sizes array before submission if form is valid
+    if (isValid) {
+        updateSizesArray();
+    }
+
+    return isValid;
+}
+function clearErrorMessages() {
+    document.querySelectorAll('.error-message').forEach(el => (el.textContent = ''));
+}
+
+// Function to display an error message
+function displayErrorMessage(id, message) {
+    const errorElement = document.getElementById(id);
+    if (errorElement) {
+        errorElement.textContent = message;
+    }
+}
+
+
+       </script>
+<%- include("../../view/partials/admin/footer") %>
+       

@@ -1,0 +1,301 @@
+<%-include("../../view/partials/user/header")%>
+
+<!-- Breadcrumb Start -->
+<div class="container-fluid">
+    <div class="row px-xl-5">
+        <div class="col-12">
+            <nav class="breadcrumb bg-light mb-30">
+                <a class="breadcrumb-item text-dark" href="#">Home</a>
+                <a class="breadcrumb-item text-dark" href="#">Shop</a>
+                <span class="breadcrumb-item active">Shop List</span>
+            </nav>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+
+
+
+
+<% if (locals.searchQuery) { %>
+    <div class="container-fluid">
+        <div class="row px-xl-5">
+            <div class="col-12">
+                <div class="bg-light p-3 mb-3">
+                    <% if (searchResultsInfo) { %>
+                        <h5><%= searchResultsInfo.message %></h5>
+                        <a href="/shop" class="btn btn-sm btn-outline-primary">Clear Search</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<!-- Shop Start -->
+<div class="container-fluid">
+    <!-- <div class="row px-xl-5">
+        Shop Sidebar Start
+         <div class="col-lg-3 col-md-4">
+            Price Start
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by price</span></h5>
+            <div class="bg-light p-4 mb-30">
+                <form>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="price-all">
+                        <label class="custom-control-label" for="price-all">All Price</label>
+                        <span class="badge border font-weight-normal">1000</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="price-1">
+                        <label class="custom-control-label" for="price-1">$0 - $100</label>
+                        <span class="badge border font-weight-normal">150</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="price-2">
+                        <label class="custom-control-label" for="price-2">$100 - $200</label>
+                        <span class="badge border font-weight-normal">295</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="price-3">
+                        <label class="custom-control-label" for="price-3">$200 - $300</label>
+                        <span class="badge border font-weight-normal">246</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="price-4">
+                        <label class="custom-control-label" for="price-4">$300 - $400</label>
+                        <span class="badge border font-weight-normal">145</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
+                        <input type="checkbox" class="custom-control-input" id="price-5">
+                        <label class="custom-control-label" for="price-5">$400 - $500</label>
+                        <span class="badge border font-weight-normal">168</span>
+                    </div>
+                </form>
+            </div>
+            Price End
+            
+            Color Start
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by color</span></h5>
+            <div class="bg-light p-4 mb-30">
+                <form>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="color-all">
+                        <label class="custom-control-label" for="price-all">All Color</label>
+                        <span class="badge border font-weight-normal">1000</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="color-1">
+                        <label class="custom-control-label" for="color-1">Black</label>
+                        <span class="badge border font-weight-normal">150</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="color-2">
+                        <label class="custom-control-label" for="color-2">White</label>
+                        <span class="badge border font-weight-normal">295</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="color-3">
+                        <label class="custom-control-label" for="color-3">Red</label>
+                        <span class="badge border font-weight-normal">246</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="color-4">
+                        <label class="custom-control-label" for="color-4">Blue</label>
+                        <span class="badge border font-weight-normal">145</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
+                        <input type="checkbox" class="custom-control-input" id="color-5">
+                        <label class="custom-control-label" for="color-5">Green</label>
+                        <span class="badge border font-weight-normal">168</span>
+                    </div>
+                </form>
+            </div>
+            Color End
+
+            Size Start
+            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by size</span></h5>
+            <div class="bg-light p-4 mb-30">
+                <form>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" checked id="size-all">
+                        <label class="custom-control-label" for="size-all">All Size</label>
+                        <span class="badge border font-weight-normal">1000</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="size-1">
+                        <label class="custom-control-label" for="size-1">XS</label>
+                        <span class="badge border font-weight-normal">150</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="size-2">
+                        <label class="custom-control-label" for="size-2">S</label>
+                        <span class="badge border font-weight-normal">295</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="size-3">
+                        <label class="custom-control-label" for="size-3">M</label>
+                        <span class="badge border font-weight-normal">246</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                        <input type="checkbox" class="custom-control-input" id="size-4">
+                        <label class="custom-control-label" for="size-4">L</label>
+                        <span class="badge border font-weight-normal">145</span>
+                    </div>
+                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
+                        <input type="checkbox" class="custom-control-input" id="size-5">
+                        <label class="custom-control-label" for="size-5">XL</label>
+                        <span class="badge border font-weight-normal">168</span>
+                    </div>
+                </form>
+            </div>
+            Size End
+        </div> -->
+        <!-- Shop Sidebar End -->
+
+<div class="col-lg-9 col-md-8">
+    <div class="row pb-3">
+        <div class="col-12 pb-1">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <div>
+                    <button class="btn btn-sm btn-light"><i class="fa fa-th-large"></i></button>
+                    <button class="btn btn-sm btn-light ml-2"><i class="fa fa-bars"></i></button>
+                </div>
+                <div class="ml-2">
+
+
+
+                    <!-- //sorting -->
+                    <div class="btn-group">
+    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">
+        Sorting
+    </button>
+    <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item <%= currentSort === 'new-arrivals' ? 'active' : '' %>" 
+           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=new-arrivals&page=1">
+            New Arrivals
+        </a>
+        <a class="dropdown-item <%= currentSort === 'popularity' ? 'active' : '' %>"
+           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=popularity&page=1">
+            Popularity
+        </a>
+        <a class="dropdown-item <%= currentSort === 'price-low-high' ? 'active' : '' %>"
+           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=price-low-high&page=1">
+            Price: Low to High
+        </a>
+        <a class="dropdown-item <%= currentSort === 'price-high-low' ? 'active' : '' %>"
+           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=price-high-low&page=1">
+            Price: High to Low
+        </a>
+        <a class="dropdown-item <%= currentSort === 'rating' ? 'active' : '' %>"
+           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=rating&page=1">
+            Average Rating
+        </a>
+        <a class="dropdown-item <%= currentSort === 'featured' ? 'active' : '' %>"
+           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=featured&page=1">
+            Featured
+        </a>
+        <a class="dropdown-item <%= currentSort === 'name-asc' ? 'active' : '' %>"
+           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=name-asc&page=1">
+            Name: A to Z
+        </a>
+        <a class="dropdown-item <%= currentSort === 'name-desc' ? 'active' : '' %>"
+           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=name-desc&page=1">
+            Name: Z to A
+        </a>
+    </div>
+</div>
+
+<!-- 
+                    <div class="btn-group ml-2">
+                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Showing</button>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="#">10</a>
+                            <a class="dropdown-item" href="#">20</a>
+                            <a class="dropdown-item" href="#">30</a>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Start -->
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar for Categories -->
+                <div class="col-lg-3">
+                    <h5 class="section-title position-relative text-uppercase mb-3">
+                        <span class="bg-secondary pr-3">Categories</span>
+                    </h5>
+                    <div class="bg-light p-4">
+                        <% categories.forEach(category => { %>
+                        <a href="/shop?category=<%= category._id %>" 
+                           class="d-block text-dark <%= categoryId === category._id.toString() ? 'font-weight-bold' : '' %>">
+                            <%= category.name %>
+                        </a>
+                        <% }) %>
+                    </div>
+                </div>
+        
+                <!-- Product Listing -->
+                <div class="col-lg-9">
+                    <% if (currentCategory) { %>
+                        <h4 class="mb-4">Products in <%= currentCategory.name %></h4>
+                    <% } else { %>
+                        <h4 class="mb-4">All Products</h4>
+                    <% } %>
+        
+                    <div class="row">
+                        <% products.forEach(product => { %>
+                        <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
+                            <div class="product-item bg-light mb-4">
+                                <a href="/productDetails?id=<%= product._id %>">
+                                    <img class="img-fluid w-100" src="/uploads/<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                                </a>
+                                <div class="text-center py-4">
+                                    <a href="/productDetails?id=<%= product._id %>">
+                                        <%= product.productName %>
+                                    </a>
+                                    <div class="d-flex align-items-center justify-content-center mt-2">
+                                        <h5>₹<%= product.salePrice %></h5>
+                                        <h6 class="text-muted ml-2"><del>₹<%= product.regularPrice %></del></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+            <!-- Pagination -->
+            <% if (totalPages > 1) { %>
+                <div class="col-12">
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            <% for(let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" 
+                                       href="/shop?page=<%= i %><%= categoryId ? '&category=' + categoryId : '' %>">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+<!-- Shop End -->
+    </div>
+</div>
+</div>
+</div>
+<!-- Shop End -->
+
+
+<%-include("../../view/partials/user/footer")%>
