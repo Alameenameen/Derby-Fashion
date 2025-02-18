@@ -1,6 +1,6 @@
 <%-include("../../view/partials/user/header")%>
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"> -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
@@ -163,11 +163,45 @@ ial zoom styles */
                             <small class="pt-1">(99 Reviews)</small>
                         </div>
             
+
+                        <% 
+                        let productOffer = product.offer && product.offer.isActive ? product.offer.percentage : 0;
+                        let categoryOffer = product.category && product.category.categoryOffer && 
+                                          product.category.categoryOffer.isActive ? 
+                                          product.category.categoryOffer.percentage : 0;
+                        
+                        let displayOffer = 0;
+                        if (productOffer > 0 && categoryOffer > 0) {
+                            displayOffer = Math.max(productOffer, categoryOffer);
+                        } else if (productOffer > 0) {
+                            displayOffer = productOffer;
+                        } else if (categoryOffer > 0) {
+                            displayOffer = categoryOffer;
+                        }
+                        
+                        let hasOffer = displayOffer > 0;
+                    %>
+            
+                    <!-- Offer Badge -->
+                    <% if (hasOffer) { %>
+                        <div class="d-inline-block bg-danger text-white px-3 py-1 rounded mb-3">
+                            <strong><%= displayOffer %>% OFF</strong>
+                        </div>
+                    <% } %>
+        
+                    <!-- Price -->
+                    <div class="d-flex mt-2">
+                        <h5>₹<%= product.salePrice %></h5>
+                        <% if (hasOffer) { %>
+                            <h6 class="text-muted ml-2 mt-1"><del>₹<%= product.regularPrice %></del></h6>
+                            <span class="text-success ml-2 mt-1">(Save ₹<%= product.regularPrice - product.salePrice %>)</span>
+                        <% } %>
+                    </div>
                         <!-- Price -->
-                        <div class="d-flex mt-2">
+                        <!-- <div class="d-flex mt-2">
                             <h5>₹<%= product.salePrice %></h5>
                             <h6 class="text-muted ml-2 mt-1"><del>₹<%= product.regularPrice %></del></h6>
-                        </div>
+                        </div> -->
             
                         <!-- Sizes -->
                         <div class="d-flex mb-4">
@@ -198,28 +232,7 @@ ial zoom styles */
                             </div>
                         </div>
             
-                        <!-- Colors -->
-                        <!-- <% if (product.color) { %>
-                            <div class="d-flex mb-4 mt-4">
-                                <strong class="text-dark mr-3">Colors:</strong>
-                                <div class="color-options">
-                                    <% const colors = product.color.split(',').map(color => color.trim()) %>
-                                    <% colors.forEach((color, index) => { %>
-                                        <div class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" 
-                                                   class="custom-control-input" 
-                                                   id="color-<%= index %>" 
-                                                   name="color"
-                                                   value="<%= color %>">
-                                            <label class="custom-control-label" for="color-<%= index %>">
-                                                <%= color %>
-                                            </label>
-                                        </div>
-                                    <% }); %>
-                                </div>
-                            </div>
-                        <% } %> -->
-            
+                       
                         <!-- Hidden Inputs -->
                         <input type="hidden" name="productId" value="<%= product._id %>">
                         <input type="hidden" name="selectedSize" id="selectedSize">
@@ -448,9 +461,8 @@ ial zoom styles */
     <div class="row px-xl-5">
         <div class="col">
             <div class="owl-carousel related-carousel">
-                <%console.log(relatedProducts)%>
-                <!-- <% if (relatedProducts && relatedProducts.length > 0) { %> -->
-                    <% relatedProducts.forEach(related => { %>
+                <% if (relatedProduct && relatedProduct.length > 0) { %>
+                    <% relatedProduct.forEach(related => { %>
                 <div class="product-item bg-light">
                     <div class="product-img position-relative overflow-hidden">
                         <img class="img-fluid w-100" src="/uploads/<%=related.productImage[0]%>" alt="<%=related.productName%>">
@@ -477,17 +489,25 @@ ial zoom styles */
                     </div>
                 </div>
                 <% });%>
-                <!-- <% } else { %>
+                <% } else { %>
                     <p>No related products available.</p>
-                <% } %> -->
+                <% } %>
             </div>
           </div>
           </div>
           </div>      
+
+        <!-- </div>
+    </div>
+</div> -->
 <!-- Products End -->
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+
+    
  function zoomImage(e) {
     const zoomer = e.currentTarget;
     const image = zoomer.querySelector('img');
@@ -534,27 +554,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const btnPlus = document.querySelector('.btn-plus');
-        const btnMinus = document.querySelector('.btn-minus');
-        const quantityInput = document.querySelector('input[name="quantity"]');
-
-        if (btnPlus) {
-            btnPlus.addEventListener('click', () => {
-                const currentValue = parseInt(quantityInput.value, 10) || 1;
-                quantityInput.value = currentValue + 1;
-            });
-        }
-
-        if (btnMinus) {
-            btnMinus.addEventListener('click', () => {
-                const currentValue = parseInt(quantityInput.value, 10) || 1;
-                if (currentValue > 1) {
-                    quantityInput.value = currentValue - 1;
-                }
-            });
-        }
-    });
+   
 
 
 
@@ -658,23 +658,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Quantity increment/decrement buttons
-    const btnMinus = document.querySelector('.btn-minus');
-    const btnPlus = document.querySelector('.btn-plus');
-
-    btnMinus.addEventListener('click', () => {
-        const currentValue = parseInt(quantityInput.value);
-        if (currentValue > 1) {
-            quantityInput.value = currentValue - 1;
-        }
-    });
-
-    btnPlus.addEventListener('click', () => {
-        const currentValue = parseInt(quantityInput.value);
-        const maxQuantity = parseInt(quantityInput.max) || 100;
-        if (currentValue < maxQuantity) {
-            quantityInput.value = currentValue + 1;
-        }
-    });
+   
 });
 
 //review
@@ -780,83 +764,108 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
-// document.addEventListener('DOMContentLoaded', function() {
-//     // Rating stars functionality
-//     const starContainer = document.querySelector('.rating-stars');
-//     const stars = document.querySelectorAll('.rating-stars i');
-//     let selectedRating = 0;
+document.addEventListener('DOMContentLoaded', function() {
+    // Get DOM elements
+    const quantityInput = document.getElementById('quantityInput');
+    const btnPlus = document.querySelector('.btn-plus');
+    const btnMinus = document.querySelector('.btn-minus');
+    const MAX_ALLOWED_QUANTITY = 5;
 
-//     // Initialize star rating system
-//     stars.forEach((star, index) => {
-//         star.addEventListener('mouseover', () => {
-//             resetStars();
-//             for (let i = 0; i <= index; i++) {
-//                 stars[i].classList.remove('far');
-//                 stars[i].classList.add('fas');
-//             }
-//         });
+    // Remove all existing click event listeners
+    btnPlus.replaceWith(btnPlus.cloneNode(true));
+    btnMinus.replaceWith(btnMinus.cloneNode(true));
 
-//         star.addEventListener('mouseleave', () => {
-//             resetStars();
-//             if (selectedRating > 0) {
-//                 for (let i = 0; i < selectedRating; i++) {
-//                     stars[i].classList.remove('far');
-//                     stars[i].classList.add('fas');
-//                 }
-//             }
-//         });
+    // Get fresh references after replacing elements
+    const newBtnPlus = document.querySelector('.btn-plus');
+    const newBtnMinus = document.querySelector('.btn-minus');
 
-//         star.addEventListener('click', () => {
-//             selectedRating = index + 1;
-//             document.getElementById('rating').value = selectedRating;
-//         });
-//     });
+    // Get total stock from selected size
+    function getTotalStock() {
+        const selectedSize = document.querySelector('input[name="size"]:checked');
+        return selectedSize ? parseInt(selectedSize.dataset.quantity) : 0;
+    }
 
-//     function resetStars() {
-//         stars.forEach(star => {
-//             star.classList.remove('fas');
-//             star.classList.add('far');
-//         });
-//     }
+    // Show warning message
+    function showQuantityWarning(message) {
+        Swal.fire({
+            title: 'Quantity Limit Reached!',
+            text: message,
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#3085d6'
+        });
+    }
 
-//     // Handle review submission
-//     const reviewForm = document.getElementById('reviewForm');
-//     reviewForm.addEventListener('submit', async (e) => {
-//         e.preventDefault();
+    // Validate quantity against limits
+    function validateQuantity(value) {
+        // Ensure value is a number and at least 1
+        let newValue = Math.max(1, parseInt(value) || 1);
+        const totalStock = getTotalStock();
 
-//         const formData = {
-//             rating: selectedRating,
-//             review: document.getElementById('message').value,
-//             name: document.getElementById('name').value,
-//             email: document.getElementById('email').value,
-//             productId: document.getElementById('productId').value
-//         };
+        if (newValue > MAX_ALLOWED_QUANTITY) {
+            showQuantityWarning('You cannot add more than 5 items');
+            return MAX_ALLOWED_QUANTITY;
+        }
 
-//         try {
-//             const response = await fetch('/api/product/review', {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify(formData)
-//             });
+        if (totalStock > 0 && newValue > totalStock) {
+            showQuantityWarning(`Only ${totalStock} items available in stock`);
+            return totalStock;
+        }
 
-//             const data = await response.json();
-//             if (data.success) {
-//                 alert('Review submitted successfully!');
-//                 location.reload();
-//             } else {
-//                 alert(data.message || 'Error submitting review');
-//             }
-//         } catch (error) {
-//             console.error('Error:', error);
-//             alert('Error submitting review');
-//         }
-//     });
-// });
+        return newValue;
+    }
+
+    // Set up new click handlers
+    newBtnPlus.onclick = function(e) {
+        e.preventDefault();
+        const currentValue = parseInt(quantityInput.value) || 1;
+        quantityInput.value = validateQuantity(currentValue + 1);
+    };
+
+    newBtnMinus.onclick = function(e) {
+        e.preventDefault();
+        const currentValue = parseInt(quantityInput.value) || 1;
+        quantityInput.value = validateQuantity(currentValue - 1);
+    };
+
+    // Handle direct input changes
+    quantityInput.onchange = function() {
+        this.value = validateQuantity(this.value);
+    };
+
+    // Handle size selection
+    document.querySelectorAll('input[name="size"]').forEach(radio => {
+        radio.onchange = function() {
+            document.getElementById('selectedSize').value = this.value;
+            quantityInput.value = validateQuantity(quantityInput.value);
+        };
+    });
+
+    // Form submission validation
+    const form = document.querySelector('form');
+    if (form) {
+        form.onsubmit = function(e) {
+            const selectedSize = document.querySelector('input[name="size"]:checked');
+            if (!selectedSize) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Size Required',
+                    text: 'Please select a size before adding to cart',
+                    icon: 'warning',
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
+                });
+                return false;
+            }
+
+            quantityInput.value = validateQuantity(quantityInput.value);
+            return true;
+        };
+    }
+});
 
 </script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
 
 <%-include("../../view/partials/user/footer")%>
 

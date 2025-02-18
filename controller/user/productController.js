@@ -20,7 +20,7 @@
       
         // Fetch related products based on the same category, excluding the current product
         const relatedProducts = await Product.find({
-            category: findCategory._id,
+            category: product.category._id,
             _id: { $ne: productId }, // Exclude the current product
         }).limit(4); 
         // console.log("related items:",relatedProducts)
@@ -66,7 +66,7 @@
             product: product,
             averageRating: product.averageRating,
             numberOfReviews: product.numberOfReviews,
-            relatedProducts: relatedProducts, //  related products to the view
+            relatedProduct: relatedProducts, //  related products to the view
             quantity: product.quantity,
             category: findCategory,
             productId,
@@ -142,7 +142,7 @@ const getProductsByCategory = async (req, res) => {
         }
 
         // Base query
-        let productsQuery = Product.find(query);
+        let productsQuery = Product.find(query).populate('category');
 
         // Apply sorting based on the sort parameter
         switch(sort) {
@@ -181,7 +181,7 @@ const getProductsByCategory = async (req, res) => {
             .exec();
 
         const count = await Product.countDocuments(query);
-        const categories = await Category.find();
+        const categories = await Category.find({isListed:true});
 
         const searchResultsInfo = search ? {
             count,

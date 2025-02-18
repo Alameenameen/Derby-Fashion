@@ -23,6 +23,24 @@ const reviewSchema = new Schema({
     }
 });
 
+const offerSchema = {
+    percentage: {
+      type: Number,
+      min: 0,
+      max: 100
+    },
+    startDate: {
+      type: Date
+    },
+    endDate: {
+      type: Date
+    },
+    isActive: {
+      type: Boolean,
+      default: false
+    }
+  };
+
 const sizeQuantitySchema = new Schema({
     size: {
         type: String,
@@ -62,18 +80,11 @@ const productSchema = new Schema({
         type:Number,
         required:true
     },
-    productOffer:{
-        type:Number,
-        default:0
-    },
+    offer: offerSchema,
     quantity:{
         type:Number,
         default:0
     },
-    // color:{
-    //     type:String,
-    //     // required:true
-    // },
     sizes: [sizeQuantitySchema],
     
     productImage:{

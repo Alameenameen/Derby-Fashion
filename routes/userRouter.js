@@ -5,8 +5,11 @@ const userController = require("../controller/user/userController");
 const productController = require("../controller/user/productController")
 const profileController = require("../controller/user/profileController")
 const cartController = require("../controller/user/cartController")
-const {checkOutPage,placeOrder} = require("../controller/user/checkoutController")
+const couponController = require("../controller/user/couponControllers")
+const {checkOutPage,placeOrder,verifyPayment} = require("../controller/user/checkoutController")
 const orderController = require("../controller/user/orderController")
+const walletController = require("../controller/user/walletController")
+const wishlistController = require("../controller/user/wishlistController")
 const {userAuth, isAuthenticated,noCache,incrementProductViews} = require("../middlewares/auth")
 
 
@@ -76,9 +79,30 @@ router.post("/cart/remove", userAuth, cartController.removeFromCart);
 //checkout 
 router.get("/checkout",userAuth,checkOutPage)
 router.post("/place-order",userAuth,placeOrder)
+router.post('/verify-payment',userAuth,verifyPayment)
 router.get('/order/success/:orderId', userAuth,orderController.orderSuccessPage);
 router.post('/cancel-order/:orderId',userAuth,orderController.cancelOrder);
+router.post('/return-order/:orderId', userAuth,orderController.requestReturn);
 
+//coupons
+
+router.post('/coupons/available', couponController.getAvailableCoupons);
+router.post('/coupons/validate', couponController.validateCoupon);
+
+//wallet
+
+router.post('/add-money', userAuth, walletController.addMoneyToWallet);
+router.post('/verify-recharge', userAuth, walletController.verifyWalletRecharge);
+router.get('/transactions', userAuth, walletController.getWalletTransactions);
+router.get('/balance', userAuth, walletController.getWalletBalance);
+router.get('/verify',userAuth,walletController.verifyWalletUpdate);
+
+//wishlist
+
+router.post('/wishlist/add', userAuth, wishlistController.addToWishlist);
+router.delete('/wishlist/remove/:productId', userAuth, wishlistController.removeFromWishlist);
+router.get('/wishlist', userAuth, wishlistController.getWishlist);
+router.get('/wishlist/count', userAuth, wishlistController.getWishlistCount);
 
 
 router.get("/logout",userController.logout);

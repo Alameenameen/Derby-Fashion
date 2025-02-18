@@ -42,7 +42,8 @@ const customerInfo = async (req, res) => {
         res.render("customers", {
             data: userData,       // Pass user data to EJS template
             totalPages,           // Total number of pages
-            currentPage: page,    // Current page number
+            currentPage: page,     // Current page number
+            searchquery : search    
         });
     } catch (error) {
         console.error("Error fetching customer info:", error);

@@ -118,7 +118,8 @@ const cartCountMiddleware = async (req, res, next) => {
         if (req.session && req.session.user && req.session.user._id) {
             const cart = await Cart.findOne({ userId: req.session.user._id });
             if (cart && cart.items) {
-                const cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+                // Count unique items, not total quantity
+                const cartCount = cart.items.length;
                 res.locals.cartCount = cartCount;
                 req.session.cartCount = cartCount;
             }

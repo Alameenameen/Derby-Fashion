@@ -1,0 +1,158 @@
+<%- include("../../view/partials/admin/header") %>
+
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">Order Details</h1>
+            <a href="/admin/orderList" class="back-btn">← Back to Orders</a>
+        </div>
+
+        <div class="order-details">
+            <div class="order-info">
+                <h2>Order Information</h2>
+                <p><strong>Order ID:</strong> <%= order._id %></p>
+                <p><strong>Order Date:</strong> <%= new Date(order.createdOn).toLocaleDateString() %></p>
+                <p><strong>Status:</strong> <span class="status-badge <%= order.status.toLowerCase() %>"><%= order.status %></span></p>
+                <% if (order.deliveredDate && order.status !== 'cancelled') { %>
+                    <p><strong>Delivered Date:</strong> <%= new Date(order.deliveredDate).toLocaleDateString() %></p>
+                <% } %>
+            </div>
+
+            <div class="customer-info">
+                <h2>Customer Information</h2>
+                <p><strong>Name:</strong> <%= order.user ? order.user.name : 'Guest' %></p>
+                <p><strong>Email:</strong> <%= order.user ? order.user.email : 'N/A' %></p>
+            </div>
+
+            <div class="shipping-info">
+                <h2>Shipping Address</h2>
+                <% if (order.address) { %>
+                    <p>Name: <%= order.address.name %></p>
+                    <p>Street: <%= order.address.street %></p>
+                    <p> City: <%= order.address.city %> </p>
+                    <p>State: <%= order.address.state %> </p>
+                    <p>ZIP Code: <%= order.address.zipCode %></p>
+                    <p>Phone: <%= order.address.phone %></p>
+                <% } else { %>
+                    <p>No address information available</p>
+                <% } %>
+            </div>
+
+            <div class="order-items">
+                <h2>Ordered Items</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Image</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% order.orderedItems.forEach(item => { %>
+                                <tr>
+                                    <td><%= item.product.productName %></td>
+                                    <td>
+                                        <img src="/uploads/<%= item.product.productImage %>" 
+                                             alt="<%= item.product.productName %>"
+                                             class="product-thumbnail">
+                                    </td>
+                                    <td>₹<%= item.product.salePrice.toFixed(2) %></td>
+                                    <td><%= item.quantity %></td>
+                                    <td>₹<%= (item.product.salePrice * item.quantity).toFixed(2) %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-right"><strong>Subtotal:</strong></td>
+                                <td>₹<%= (order.totalAmount || 0).toFixed(2) %></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+
+
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-btn {
+    padding: 8px 16px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+}
+
+.order-details {
+    padding: 20px;
+}
+
+.order-info, .customer-info, .shipping-info, .order-items {
+    margin-bottom: 30px;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.product-thumbnail {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Status colors */
+.status-badge.pending { background: #fff3cd; color: #856404; }
+.status-badge.processing { background: #cce5ff; color: #004085; }
+.status-badge.shipped { background: #d4edda; color: #155724; }
+.status-badge.delivered { background: #d1e7dd; color: #0f5132; }
+.status-badge.cancelled { background: #f8d7da; color: #721c24; }
+</style>
+
+<%- include("../../view/partials/admin/footer") %>

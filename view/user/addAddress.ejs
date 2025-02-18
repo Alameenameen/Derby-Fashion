@@ -107,7 +107,7 @@
   </form>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
+<!-- <script>
   document
     .getElementById("addressForm")
     .addEventListener("submit", function (event) {
@@ -163,7 +163,7 @@
     });
 
     const namePattern = /^[A-Za-z\s]+$/;
-    const pincodePattern = /^[0-9]{6}$/; 
+    const pincodePattern = /^\d{6}$/;
     const phonePattern = /^[6-9]\d{9}$/; 
     const specialCharPattern = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
 
@@ -222,18 +222,36 @@ if (!addressType) {
       isValid = false;
     }
 
- if (!pincodePattern.test(pincode)) {
-  Swal.fire("Error", "Pincode should be a 6-digit number.", "error");
-  isValid = false;
-} else if (/^(\d)\1{5}$/.test(pincode)) {
-  Swal.fire("Error", "Pincode cannot have all digits the same.", "error");
-  isValid = false;
-} else if (!/^\d{6}$/.test(pincode)) {
-  Swal.fire("Error", "Pincode must only contain digits, no special characters or alphabets.", "error");
-  isValid = false;
-}
 
 
+    //pincode validation
+    if (!pincode || pincode.trim() === '') {
+        Swal.fire("Error", "Pincode cannot be empty.", "error");
+        isValid = false;
+    }
+    pincode = pincode.trim();
+
+    if (!pincodePattern.test(pincode)) {
+        Swal.fire("Error", "Pincode must be exactly 6 digits.", "error");
+        isValid = false;
+    }
+
+    // Check for repeated digits
+    if (/^(\d)\1{5}$/.test(pincode)) {
+        Swal.fire("Error", "Pincode cannot have all digits the same.", "error");
+        isValid = false;
+    }
+
+    // List of invalid starting digits
+    const invalidStartDigits = ['00', '0 '];
+    if (invalidStartDigits.includes(pincode.substring(0, 2))) {
+        Swal.fire("Error", "Invalid pincode format.", "error");
+        isValid = false;
+    }
+
+
+
+    //phone number validation
     if (!phonePattern.test(phone)) {
       Swal.fire("Error", 'Please enter a valid 10-digit mobile number starting with 6-9', "error");
       isValid = false;
@@ -264,5 +282,131 @@ if (!addressType) {
     }
     return isValid;
   }
+</script> -->
+
+<script>
+  document.getElementById("addressForm").addEventListener("submit", function (event) {
+  event.preventDefault(); // Always prevent default first
+  if (validateForm()) {
+    this.submit(); // Only submit if validation passes
+  }
+});
+
+function validateForm() {
+  let isValid = true;
+  const requiredFields = [
+    "addressType",
+    "name",
+    "city",
+    "landMark",
+    "state",
+    "pincode",
+    "phone",
+    "altPhone",
+  ];
+
+  // Check required fields first
+  for (const field of requiredFields) {
+    const input = document.getElementById(field);
+    const inputValue = input.value.trim();
+
+    if (!inputValue) {
+      Swal.fire(
+        "Error",
+        `${field.charAt(0).toUpperCase() + field.slice(1)} is required.`,
+        "error"
+      );
+      isValid = false;
+      return false; // Exit early if any field is empty
+    }
+  }
+
+  const namePattern = /^[A-Za-z\s]+$/;
+  const pincodePattern = /^\d{6}$/;
+  const phonePattern = /^[6-9]\d{9}$/;
+  const specialCharPattern = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
+  // Get all input values
+  const name = document.getElementById("name").value.trim();
+  const city = document.getElementById("city").value.trim();
+  const landMark = document.getElementById("landMark").value.trim();
+  const state = document.getElementById("state").value.trim();
+  const pincode = document.getElementById("pincode").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const altPhone = document.getElementById("altPhone").value.trim();
+  const addressType = document.getElementById("addressType").value.trim();
+
+  // Address type validation
+  if (!addressType) {
+    Swal.fire("Error", "Please select an address type.", "error");
+    return false;
+  }
+  if (!['Home', 'Work', 'Other'].includes(addressType)) {
+    Swal.fire("Error", "Invalid address type selected.", "error");
+    return false;
+  }
+
+  // Text fields validation
+  const textFields = [
+    { value: name, name: "Name" },
+    { value: city, name: "City" },
+    { value: landMark, name: "Landmark" },
+    { value: state, name: "State" }
+  ];
+
+  for (const field of textFields) {
+    if (specialCharPattern.test(field.value)) {
+      Swal.fire("Error", `${field.name} cannot contain special characters.`, "error");
+      return false;
+    }
+    if (!namePattern.test(field.value)) {
+      Swal.fire("Error", `${field.name} should contain alphabets only.`, "error");
+      return false;
+    }
+  }
+
+  // Pincode validation
+  if (!pincodePattern.test(pincode)) {
+    Swal.fire("Error", "Pincode must be exactly 6 digits.", "error");
+    return false;
+  }
+  if (/^(\d)\1{5}$/.test(pincode)) {
+    Swal.fire("Error", "Pincode cannot have all digits the same.", "error");
+    return false;
+  }
+  if (pincode.startsWith('00') || pincode.startsWith('0 ')) {
+    Swal.fire("Error", "Invalid pincode format.", "error");
+    return false;
+  }
+
+  // Phone number validation
+  if (!phonePattern.test(phone)) {
+    Swal.fire("Error", "Please enter a valid 10-digit mobile number starting with 6-9", "error");
+    return false;
+  }
+  if (/^(\d)\1{9}$/.test(phone)) {
+    Swal.fire("Error", "Phone number cannot contain all same digits", "error");
+    return false;
+  }
+
+  // Alternate phone validation
+  if (!phonePattern.test(altPhone)) {
+    Swal.fire("Error", "Please enter a valid 10-digit mobile number starting with 6-9", "error");
+    return false;
+  }
+  if (/^(\d)\1{9}$/.test(altPhone)) {
+    Swal.fire("Error", "Alternate phone number cannot contain all same digits", "error");
+    return false;
+  }
+
+  // Check if phone numbers are different
+  if (phone === altPhone) {
+    Swal.fire("Error", "Phone number and alternate phone number should be different.", "error");
+    return false;
+  }
+
+  return isValid;
+}
 </script>
+
 <%- include("../../view/partials/user/footer") %>

@@ -1,71 +1,303 @@
 <%- include("../../view/partials/admin/header") %>
+
 <head>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .col-md-3 {
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      margin: 10px;
-    }
+  /* Global Styles */
+:root {
+    --primary-black: #1a1a1a;
+    --secondary-black: #333333;
+    --light-gray: #f5f5f5;
+    --border-gray: #e0e0e0;
+    --primary-blue: #4a90e2;
+    --primary-green: #28a745;
+    --primary-red: #dc3545;
+}
 
-    .form-label {
-      margin-bottom: 8px;
-    }
+.content-main {
+    padding: 2rem;
+    background: #ffffff;
+}
 
-    .form-control {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
+/* Header Styles */
+.content-header {
+    margin-bottom: 2rem;
+}
 
-    .d-grid {
-      margin-top: 20px;
+.content-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--primary-black);
+    margin: 0;
+}
+
+/* Search Bar */
+.search-container {
+    max-width: 500px;
+    margin: 2rem auto;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 2px solid var(--primary-black);
+    border-radius: 50px;
+    padding: 0.3rem;
+}
+
+.input-group input {
+    flex: 1;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    outline: none;
+    background: transparent;
+}
+
+.input-group button {
+    background: var(--primary-black);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.input-group button:hover {
+    background: var(--secondary-black);
+}
+
+/* Form Styles */
+.category-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-label {
+    color: var(--primary-black);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border-gray);
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-black);
+    outline: none;
+}
+
+select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border-gray);
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    background: white;
+}
+
+/* Table Styles */
+.table-container {
+    margin-top: 2rem;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead {
+    background: var(--primary-black);
+    color: white;
+}
+
+.table th {
+    padding: 1rem;
+    font-weight: 500;
+    text-align: left;
+}
+
+.table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-gray);
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background: var(--light-gray);
+}
+
+/* Image Preview */
+.input-upload {
+    margin-bottom: 1.5rem;
+}
+
+.preview-container {
+    width: 100px;
+    height: 100px;
+    border: 2px dashed var(--border-gray);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+/* Updated Button Styles */
+.btn {
+    padding: 0.8rem 0.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    display: inline-block;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--primary-black);
+    color: white;
+    width: 35%; /* Reduced from 100% */
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 3rem;
+}
+
+.btn-info {
+    background: var(--primary-blue);
+    color: white;
+    min-width: 70px;
+    margin: 0.2rem;
+}
+
+.btn-success {
+    background: var(--primary-green);
+    color: white;
+    min-width: 70px;
+}
+
+.btn-danger {
+    background: var(--primary-red);
+    color: white;
+    min-width: 70px;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Remove link underlines */
+.btn a {
+    text-decoration: none;
+    color: white;
+}
+
+/* Status Badges */
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.875rem;
+}
+
+.alert-success {
+    background: var(--primary-green);
+    color: white;
+}
+
+.alert-danger {
+    background: var(--primary-red);
+    color: white;
+}
+
+/* Layout Adjustments */
+.col-md-8.ml-10 {
+    margin-left: 0 !important;
+    padding-left: 2rem;
+}
+
+/* Pagination */
+.pagination-container {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.pagination-container a, 
+.current-page {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-gray);
+    border-radius: 5px;
+    color: var(--primary-black);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.pagination-container a:hover {
+    background: var(--primary-black);
+    color: white;
+}
+
+.current-page {
+    background: var(--primary-black);
+    color: white;
+}
+
+/* Error Messages */
+.error-message {
+    color: var(--primary-red);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: none;
+}
+.card-body {
+    padding-top: 2rem; /* Additional top padding inside the card */
+}
+.card {
+    margin-top: 3rem; /* Adds space above the card containing the table */
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .content-main {
+        padding: 1rem;
+    }
+    
+    .col-md-3, 
+    .col-md-8 {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        overflow-x: auto;
     }
 
     .btn-primary {
-      background-color: #007bff;
-      color: #fff;
-      border: 1px solid #007bff;
-      border-radius: 5px;
-      padding: 10px 20px;
-      cursor: pointer;
+        width: 100%; /* Full width on mobile */
     }
 
-    .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #0056b3;
+    .input-group {
+        width: 100%;
+        margin-left: 0;
     }
-
-    .pagination-container {
-      text-align: center;
+    .card {
+        margin-top: 2rem; /* Less space on mobile */
     }
-
-    .pagination {
-      display: inline-block;
-    }
-
-    .pagination a,
-    .pagination .current-page {
-      display: inline-block;
-      padding: 5px 10px;
-      margin: 0 2px;
-      border: 1px solid #ddd;
-      text-decoration: none;
-      color: #333;
-    }
-
-    .pagination a:hover {
-      background-color: #f5f5f5;
-    }
-
-    .error-message {
-      color: red;
-    }
-  </style>
+}
+</style>
 </head>
 <body>
   <section class="content-main">
@@ -74,14 +306,7 @@
         <h2 class="content-title card-title">Category</h2>
       </div>
     </div>
-    <header class="card-header text-center mb-20">
-      <form action="/admin/category" method="get" class="d-inline">
-        <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px">
-          <input type="text" class="form-control border-0 rounded-pill mt-3" placeholder="Search categories" name="search"/>
-          <button class="btn" type="submit">Search</button>
-        </div>
-      </form>
-    </header>
+   
     <div class="card">
       <div class="card-body">
         <div class="row">
@@ -135,15 +360,31 @@
               </div>
             </form>
           </div>
+         
+
           <div class="col-md-8 ml-10">
+            <div class="card-header mb-3">
+              <form action="" method="get" class="d-flex justify-content-end">
+                <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 300px;">
+                  <input 
+                    type="text" 
+                    class="form-control border-0 rounded-pill" 
+                    placeholder="Search categories" 
+                    name="search"
+                    value="<%= searchQuery %>"
+                  />
+                  <button class="btn" type="submit">Search</button>
+                </div>
+              </form>
+            </div>
             <div class="table-responsive">
               <table class="table table-hover">
                 <thead>
                   <tr>
                     <th class="text-center"></th>
                     <th>Name</th>
-                    <th>Image</th> 
-                    <th>Description</th>
+                    <th>Description</th> 
+                    <th>Image</th>
                     <th>Offer Price</th>
                     <th>Offer</th>
                     <th>Status</th>
@@ -159,7 +400,12 @@
                     <td></td>
                     <td class="text-start"><%=category.name%></td>
                     <td class="text-start"><%=category.description%></td>
-                    <td>
+                    <td class="text-start">
+                      <% if (category.categoryOffer && category.categoryOffer.percentage) { %>
+                        <%= category.categoryOffer.percentage %>%
+                      <% } else { %>
+                        No offer
+                      <% } %>
                     </td>
 
                     <td class="text-start">
@@ -175,12 +421,19 @@
                     </td>
 
                     <td class="text-start">
-                      <button class="btn btn-info" style="width: 100px">
-                        <a href="#" class="text-white">Add Offer</a>
-                      </button>
-                      <button class="btn btn-info"style="width: 100px">
-                        <a href="#" class="text-white">Remove</a>
-                      </button>
+                      <% if (!category.categoryOffer || !category.categoryOffer.percentage) { %>
+                        <button class="btn btn-info" style="width: 100px" onclick="openAddCategoryOfferModal('<%= category._id %>')">
+                          Add Offer
+                        </button>
+                      <% } else { %>
+                        <button class="btn btn-warning" style="width: 100px" onclick="openEditCategoryOfferModal('<%= category._id %>')">
+                          Edit Offer
+                        </button>
+                        <button class="btn btn-danger" style="width: 100px" onclick="removeCategoryOffer('<%= category._id %>')">
+                          Remove
+                        </button>
+                      <% } %>
+                      
                     </td>
                     <td class="text-start">
 
@@ -240,9 +493,73 @@
         <a href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
         <% } %>
       </div>
-  </section>
+
+    </section>
+<!-- //add offer -->
+      <div class="modal fade" id="addOfferModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Offer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addOfferForm">
+                        <input type="hidden" id="addOfferProductId" name="categoryId">
+                        <div class="mb-3">
+                            <label for="percentage" class="form-label">Discount Percentage</label>
+                            <input type="number" class="form-control" id="percentage" name="percentage">
+                        </div>
+                        <div class="mb-3">
+                            <label for="startDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="startDate" name="startDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="endDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="endDate" name="endDate" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Offer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+      
+      <!-- Edit Offer Modal -->
+      <div class="modal fade" id="editOfferModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Offer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editOfferForm">
+                        <input type="hidden" id="editOfferProductId" name="categoryId">
+                        <div class="mb-3">
+                            <label for="editPercentage" class="form-label">Discount Percentage</label>
+                            <input type="number" class="form-control" id="editPercentage" name="percentage" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="editStartDate" class="form-label">Start Date</label>
+                            <input type="date" class="form-control" id="editStartDate" name="startDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEndDate" class="form-label">End Date</label>
+                            <input type="date" class="form-control" id="editEndDate" name="endDate" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Offer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+    <!-- </section> -->
+
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 
   <script>
     function handleFormSubmit(event){
@@ -375,6 +692,175 @@
         preview.style.display = 'none';
     }
 }
+
+
+
+function openAddCategoryOfferModal(categoryId) {
+    document.getElementById('addOfferProductId').value = categoryId;
+    new bootstrap.Modal(document.getElementById('addOfferModal')).show();
+}
+
+function openEditCategoryOfferModal(categoryId) {
+    document.getElementById('editOfferProductId').value = categoryId;
+    
+    fetch(`/admin/category/getOffer/${categoryId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('editPercentage').value = data.percentage;
+            document.getElementById('editStartDate').value = new Date(data.startDate).toISOString().split('T')[0];
+            document.getElementById('editEndDate').value = new Date(data.endDate).toISOString().split('T')[0];
+            new bootstrap.Modal(document.getElementById('editOfferModal')).show();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', 'Failed to fetch offer details', 'error');
+        });
+}
+
+// Update the form submission handlers
+document.getElementById('addOfferForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!validateOfferForm(this)) {
+        return;
+    }
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    fetch('/admin/category/addOffer', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            Swal.fire('Success', data.message, 'success').then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire('Error', data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire('Error', 'Failed to add category offer', 'error');
+    });
+});
+
+document.getElementById('editOfferForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (!validateOfferForm(this)) {
+        return;
+    }
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData);
+    
+    fetch('/admin/category/editOffer', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            Swal.fire('Success', data.message, 'success').then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire('Error', data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire('Error', 'Failed to update category offer', 'error');
+    });
+});
+
+function removeCategoryOffer(categoryId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This will remove the offer from this category",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, remove it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('/admin/category/removeOffer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ categoryId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    Swal.fire(
+                        'Deleted!',
+                        data.message,
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.error || 'Something went wrong', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to remove offer', 'error');
+            });
+        }
+    });
+}
+
+function validateOfferForm(form) {
+    const percentage = form.querySelector('[name="percentage"]').value;
+    const startDate = form.querySelector('[name="startDate"]').value;
+    const endDate = form.querySelector('[name="endDate"]').value;
+    const today = new Date()
+    today.setHours(0, 0, 0, 0);
+    
+    if (!percentage || percentage <= 1 || percentage >= 100) {
+        Swal.fire("Error", "Please enter a valid discount percentage (1-99).", "error");
+        return false;
+    }
+
+    if (!startDate) {
+        Swal.fire("Error", "Please select a start date.", "error");
+        return false;
+    }
+
+    if (!endDate) {
+        Swal.fire("Error", "Please select an end date.", "error");
+        return false;
+    }
+
+    if (new Date(startDate) >= new Date(endDate)) {
+        Swal.fire("Error", "End date should be after the start date.", "error");
+        return false;
+    }
+
+    if (new Date(startDate)  < today) {
+      Swal.fire("Error", 'Start date cannot be in the past',"error");
+        return false;
+    }
+
+    return true;
+}
+
+
+
   </script>
 <%- include("../../view/partials/admin/footer") %>
 

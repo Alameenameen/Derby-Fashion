@@ -27,7 +27,9 @@ const loadHomepage = async (req, res) => {
             isBlocked: false,
             category: { $in: categories.map((category) => category._id) },
             quantity: { $gt: 0 }, 
-        }).sort({ createdAt: 1 });
+        })
+        .populate('category') 
+        .sort({ createdAt: 1 });
 
        
 
@@ -45,27 +47,28 @@ const loadHomepage = async (req, res) => {
 };
 
 
-const shoppingPage = async(req, res) => {
+// this is not the actual controller , please check shop page route okay
+
+const shoppingPage = async (req, res) => {
     try {
         // Get user data
         const user = req.session.user;
-        const userData = await User.findById(user); // Using findById is more efficient than findOne({_id: user})
+        const userData = await User.findById(user);
 
-        // Handle category filtering
-        const selectedCategoryId = req.query.category; // Add this to handle category filtering
-        const categories = await Category.find({isListed: true});
-        
+        // Get categories
+        const categories = await Category.find({ isListed: true });
+
         // Build query
         let query = {
             isBlocked: false,
             quantity: { $gt: 0 }
         };
 
-        // If specific category is selected, filter by that category
+        // Handle category filtering
+        const selectedCategoryId = req.query.category;
         if (selectedCategoryId) {
             query.category = selectedCategoryId;
         } else {
-            // If no specific category, use all valid categories
             const categoryIds = categories.map(category => category._id);
             query.category = { $in: categoryIds };
         }
@@ -75,18 +78,29 @@ const shoppingPage = async(req, res) => {
         const limit = 12;
         const skip = (page - 1) * limit;
 
-        // Fetch products with pagination
+        // Fetch products with full category details
         const products = await Product.find(query)
-            .populate("category", "name")
-            .sort({createdOn: -1})
+            .populate({
+                path: 'category',
+                select: 'name categoryOffer.percentage categoryOffer.isActive categoryOffer.startDate categoryOffer.endDate'
+            })
+            .sort({ createdOn: -1 })
             .skip(skip)
             .limit(limit);
+
+        // Debug log to check populated data
+        console.log('Sample product category data:', 
+            products.length > 0 ? {
+                productName: products[0].productName,
+                categoryOffer: products[0].category?.categoryOffer,
+            } : 'No products found'
+        );
 
         // Get total count for pagination
         const totalProducts = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalProducts / limit);
 
-        // Prepare category data for the view
+        // Prepare category data
         const categoryData = categories.map(category => ({
             _id: category._id,
             name: category.name,
@@ -108,6 +122,7 @@ const shoppingPage = async(req, res) => {
         res.redirect("/pageNotFound");
     }
 };
+
 
 const loadSignup = async(req,res)=>{
     try{

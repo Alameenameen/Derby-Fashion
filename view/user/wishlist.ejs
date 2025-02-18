@@ -1,0 +1,193 @@
+<%- include("../../view/partials/user/header") %>
+
+
+<div class="container-fluid pt-5">
+    <div class="row px-xl-5">
+        <div class="col-lg-12 table-responsive mb-5">
+            <h2 class="section-title position-relative text-uppercase mx-xl-5 mb-4">
+                <span class="bg-secondary pr-3">My Wishlist</span>
+            </h2>
+            <% if (wishlistItems.length > 0) { %>
+                <div class="row px-xl-5">
+                    <% wishlistItems.forEach(function(item) { 
+                        const product = item.productsId;
+                        
+                        // Calculate effective offer
+                        let productOffer = product.offer && product.offer.isActive ? product.offer.percentage : 0;
+                        let categoryOffer = product.category && product.category.categoryOffer && 
+                                         product.category.categoryOffer.isActive ? 
+                                         product.category.categoryOffer.percentage : 0;
+                        let displayOffer = Math.max(productOffer, categoryOffer);
+                        let hasOffer = displayOffer > 0;
+                        
+                        // Calculate final price
+                        let finalPrice = hasOffer ? 
+                            product.regularPrice * (1 - displayOffer/100) : 
+                            product.salePrice;
+                    %>
+                    <div class="col-lg-3 col-md-4 col-sm-6 pb-1">
+                        <div class="product-item bg-light mb-4">
+                            <div class="product-img position-relative overflow-hidden">
+                                <a href="/productDetails?id=<%= product._id %>">
+                                    <img class="img-fluid w-100" src="/uploads/<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                                </a>
+                                <div class="product-action">
+                                    <!-- <% if (product.status === 'Available' && (product.quantity > 0 || product.sizes.some(size => size.quantity > 0))) { %>
+                                        <a class="btn btn-outline-dark btn-square" onclick="addToCart('<%= product._id %>')">
+                                            <i class="fa fa-shopping-cart"></i>
+                                        </a>
+                                    <% } %> -->
+                                    <!-- <a class="btn btn-outline-dark btn-square" onclick="removeFromWishlist('<%= product._id %>')"> -->
+                                        <!-- <i class="fa fa-trash"></i>
+                                    </a> -->
+
+                                    <button onclick="removeFromWishlist('<%- product._id %>')" class="btn btn-sm">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <% if (hasOffer) { %>
+                                    <div class="offer-badge position-absolute bg-danger text-white px-2 py-1">
+                                        <%= displayOffer %>% OFF
+                                    </div>
+                                <% } %>
+                                <% if (product.status !== 'Available' || (product.quantity === 0 && product.sizes.every(size => size.quantity === 0))) { %>
+                                    <div class="out-of-stock-badge position-absolute bg-dark text-white px-2 py-1">
+                                        Out of Stock
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="text-center py-4">
+                                <a class="h6 text-decoration-none text-truncate" href="/productDetails?id=<%= product._id %>">
+                                    <%= product.productName %>
+                                </a>
+                                <p class="text-muted mb-2"><%= product.brand.name %></p>
+                                
+                                <div class="d-flex align-items-center justify-content-center mt-2">
+                                    <% if (hasOffer) { %>
+                                        <h5>₹<%= parseInt(finalPrice) %></h5>
+                                        <h6 class="text-muted ml-2"><del>₹<%= parseInt(product.regularPrice) %></del></h6>
+                                    <% } else { %>
+                                        <h5>₹<%= parseInt(product.salePrice) %></h5>
+                                    <% } %>
+                                </div>
+
+                                <!-- <div class="d-flex align-items-center justify-content-center mt-2">
+                                    <% if (hasOffer) { %>
+                                        <h5>₹<%= finalPrice.toFixed(2) %></h5>
+                                        <h6 class="text-muted ml-2"><del>₹<%= product.regularPrice %></del></h6>
+                                    <% } else { %>
+                                        <h5>₹<%= product.salePrice %></h5>
+                                    <% } %>
+                                </div> -->
+                                <% if (product.averageRating > 0) { %>
+                                    <div class="d-flex align-items-center justify-content-center mb-1">
+                                        <% for(let i = 1; i <= 5; i++) { %>
+                                            <small class="fa fa-star <%= i <= product.averageRating ? 'text-primary' : 'text-secondary' %> mr-1"></small>
+                                        <% } %>
+                                        <small>(<%= product.numberOfReviews %>)</small>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <h4>Your wishlist is empty</h4>
+                    <a href="/shop" class="btn btn-primary mt-3">Continue Shopping</a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<style>
+.offer-badge {
+    top: 10px;
+    left: 10px;
+    z-index: 1;
+}
+
+.out-of-stock-badge {
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+}
+
+.product-action {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, .7);
+    opacity: 0;
+    transition: all 0.5s;
+}
+
+.product-item:hover .product-action {
+    opacity: 1;
+}
+
+.product-action a {
+    margin: 0 3px;
+}
+
+.text-truncate {
+    max-width: 200px;
+    margin: 0 auto;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    updateWishlistCount();
+});
+
+function updateWishlistCount() {
+    fetch('/wishlist/count')
+        .then(response => response.json())
+        .then(data => {
+            const wishlistCountElements = document.querySelectorAll('.wishlist-count');
+            wishlistCountElements.forEach(element => {
+                element.textContent = data.count;
+            });
+        });
+}
+
+function removeFromWishlist(productId) {
+    fetch(`/wishlist/remove/${productId}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updateWishlistCount();
+            location.reload();
+        }
+    });
+}
+
+function addToWishlist(productId) {
+    fetch('/wishlist/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updateWishlistCount();
+            // You can add a toast notification here
+        }
+    });
+}
+</script>
+
+<%- include("../../view/partials/user/footer") %>

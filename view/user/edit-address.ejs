@@ -50,8 +50,8 @@
    </form>
 </div>
 
-
-<script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- <script>
     document.getElementById('submitButton').addEventListener('click', function (event) {
         if (!validateForm()) {
             event.preventDefault();
@@ -77,7 +77,7 @@
         
         // Validation patterns
         const namePattern = /^[A-Za-z\s]+$/;
-        const pincodePattern = /^[0-9]{6}$/;
+        const pincodePattern = /^\d{6}$/;
         const phonePattern = /^[0-9]{10}$/;
         const specialCharPattern = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
         
@@ -113,16 +113,23 @@
 
         // Pincode validation
         const pincode = document.getElementById('pincode').value.trim();
-        if (pincode === "") {
-            showError("Please fill in the pincode field.");
-            isValid = false;
-        } else if (!pincodePattern.test(pincode)) {
-            showError("Pincode must be exactly 6 digits.");
-            isValid = false;
-        } else if (/^0{6}$/.test(pincode)) {
-          Swal.fire("Error", "Pincode cannot be all zeros.", "error");
-          isValid = false;
-        }
+        if (!pincodePattern.test(pincode)) {
+        Swal.fire("Error", "Pincode must be exactly 6 digits.", "error");
+        isValid = false;
+    }
+
+    // Check for repeated digits
+    if (/^(\d)\1{5}$/.test(pincode)) {
+        isValid = false;
+    }
+
+    // List of invalid starting digits
+    const invalidStartDigits = ['00', '0 '];
+    if (invalidStartDigits.includes(pincode.substring(0, 2))) {
+        Swal.fire("Error", "Invalid pincode format.", "error");
+        isValid = false;
+    }
+
 
 
 
@@ -152,7 +159,137 @@
             icon: 'error'
         });
     }
+</script> -->
+<script>
+document.getElementById('addressForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form submission first
+    if (validateForm()) {
+        this.submit(); // Submit only if validation passes
+    }
+});
+
+function validateForm() {
+    let isValid = true;
+
+    // Address Type validation
+    const validAddressTypes = ['Home', 'Office', 'Work', 'Other'];
+    const addressType = document.getElementById('addressType').value.trim();
+    
+    if (!addressType) {
+        showError("Please select an address type.");
+        return false;
+    } 
+    if (!validAddressTypes.includes(addressType)) {
+        showError("Invalid address type selected.");
+        return false;
+    }
+
+    // Validation patterns
+    const namePattern = /^[A-Za-z\s]+$/;
+    const pincodePattern = /^\d{6}$/;
+    const phonePattern = /^[6-9]\d{9}$/;
+    const specialCharPattern = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/;
+
+    // Text-only fields validation (letters and spaces only)
+    const textOnlyFields = ["name", "city", "state"];
+    for (const field of textOnlyFields) {
+        const input = document.getElementById(field);
+        const value = input.value.trim();
+        
+        if (!value) {
+            showError(`Please fill in the ${field} field.`);
+            return false;
+        }
+        if (specialCharPattern.test(value)) {
+            showError(`Special characters are not allowed in ${field}.`);
+            return false;
+        }
+        if (!namePattern.test(value)) {
+            showError(`${field.charAt(0).toUpperCase() + field.slice(1)} should contain only letters and spaces.`);
+            return false;
+        }
+    }
+
+    // Landmark validation
+    const landmark = document.getElementById('landMark').value.trim();
+    if (!landmark) {
+        showError("Please fill in the landmark field.");
+        return false;
+    }
+    if (specialCharPattern.test(landmark)) {
+        showError("Special characters are not allowed in landmark.");
+        return false;
+    }
+
+    // Pincode validation
+    const pincode = document.getElementById('pincode').value.trim();
+    if (!pincode) {
+        showError("Please enter a pincode.");
+        return false;
+    }
+    if (!pincodePattern.test(pincode)) {
+        showError("Pincode must be exactly 6 digits.");
+        return false;
+    }
+    if (/^(\d)\1{5}$/.test(pincode)) {
+        showError("Pincode cannot have all digits the same.");
+        return false;
+    }
+    if (pincode.startsWith('00')) {
+        showError("Invalid pincode format.");
+        return false;
+    }
+
+    // Phone numbers validation
+    const phone = document.getElementById('phone').value.trim();
+    const altPhone = document.getElementById('altPhone').value.trim();
+
+    // Primary phone validation
+    if (!phone) {
+        showError("Please enter a phone number.");
+        return false;
+    }
+    if (!phonePattern.test(phone)) {
+        showError("Phone number must be 10 digits and start with 6-9.");
+        return false;
+    }
+    if (/^(\d)\1{9}$/.test(phone)) {
+        showError("Phone number cannot be all same digits.");
+        return false;
+    }
+
+    // Alternate phone validation
+    if (!altPhone) {
+        showError("Please enter an alternate phone number.");
+        return false;
+    }
+    if (!phonePattern.test(altPhone)) {
+        showError("Alternate phone number must be 10 digits and start with 6-9.");
+        return false;
+    }
+    if (/^(\d)\1{9}$/.test(altPhone)) {
+        showError("Alternate phone number cannot be all same digits.");
+        return false;
+    }
+
+    // Check if phone numbers are different
+    if (phone === altPhone) {
+        showError("Phone number and alternate phone number must be different.");
+        return false;
+    }
+
+    return isValid;
+}
+
+function showError(message) {
+    Swal.fire({
+        title: 'Error',
+        text: message,
+        icon: 'error'
+    });
+}
 </script>
+
 <%- include("../../view/partials/user/footer") %>
 
 

@@ -1,249 +1,188 @@
 <%- include("../../view/partials/admin/header") %>
 
 <style>
-    /* Container and Card Styles */
-.container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-.card {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.card-header {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.card-title {
-    margin: 0;
-    color: #2c3e50;
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-/* Table Styles */
-.table-container {
-    overflow-x: auto;
-    padding: 1rem;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 1rem;
-    background-color: white;
-}
-
-th, td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #e9ecef;
-}
-
-th {
-    background-color: #f8f9fa;
-    color: #495057;
-    font-weight: 600;
-}
-
-tr:hover {
-    background-color: #f8f9fa;
-}
-
-/* Button Styles */
-.view-address-btn, .save-btn {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-    border: none;
-}
-
-.view-address-btn {
-    background-color: #e9ecef;
-    color: #495057;
-}
-
-.view-address-btn:hover {
-    background-color: #dee2e6;
-}
-
-.save-btn {
-    background-color: #007bff;
-    color: white;
-    margin-left: 0.5rem;
-}
-
-.save-btn:hover {
-    background-color: #0056b3;
-}
-
-/* Status Select Styles */
-.status-select {
-    padding: 0.5rem;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    background-color: white;
-    color: #495057;
-    font-size: 0.9rem;
-    min-width: 120px;
-}
-
-/* Status Badge Styles */
-.status-badge {
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.status-pending {
-    background-color: #ffeeba;
-    color: #856404;
-}
-
-.status-processing {
-    background-color: #b8daff;
-    color: #004085;
-}
-
-.status-shipped {
-    background-color: #c3e6cb;
-    color: #155724;
-}
-
-.status-delivered {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.status-cancelled {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-.status-return {
-    background-color: #e2e3e5;
-    color: #383d41;
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
-    max-width: 500px;
-    width: 90%;
-    position: relative;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.close-modal {
-    position: absolute;
-    right: 1rem;
-    top: 1rem;
-    font-size: 1.5rem;
-    color: #adb5bd;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.close-modal:hover {
-    color: #495057;
-}
-
-.address-details {
-    margin-top: 1rem;
-}
-
-.address-details p {
-    margin: 0.5rem 0;
-    color: #495057;
-}
-
-.address-label {
-    font-weight: 600;
-    color: #2c3e50;
-    margin-right: 0.5rem;
-}
-
-/* Success Message Styles */
-.success-message {
-    display: none;
-    background-color: #d4edda;
-    color: #155724;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    text-align: center;
-    font-weight: 500;
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
+    :root {
+        --dark-blue: #1a237e;
+        --light-blue: #303f9f;
+        --white: #ffffff;
+        --black: #000000;
+        --gray: #f5f5f5;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
-/* Responsive Styles */
-@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .success-message {
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        display: none;
+    }
+
+    .card {
+        background: var(--white);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
     .card-header {
-        padding: 1rem;
+        background: var(--dark-blue);
+        color: var(--white);
+        padding: 20px;
+        border-radius: 8px 8px 0 0;
     }
 
-    th, td {
-        padding: 0.75rem;
+    .card-title {
+        margin: 0;
+        font-size: 24px;
+    }
+
+    .table-container {
+        overflow-x: auto;
+        padding: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th {
+        background: var(--dark-blue);
+        color: var(--white);
+        padding: 12px;
+        text-align: left;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+        background-color: var(--gray);
     }
 
     .status-select {
-        min-width: 100px;
+        padding: 8px;
+        border: 1px solid var(--dark-blue);
+        border-radius: 4px;
+        margin-right: 10px;
     }
 
-    .view-address-btn, .save-btn {
-        padding: 0.4rem 0.8rem;
+    .save-btn, .view-address-btn, .view-details-btn {
+        background: var(--dark-blue);
+        color: var(--white);
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
     }
+
+    .save-btn:hover, .view-address-btn:hover, .view-details-btn:hover {
+        background: var(--light-blue);
+    }
+
+    .save-btn:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: var(--white);
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 500px;
+        position: relative;
+    }
+
+    .close-modal {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .address-details {
+        margin-top: 20px;
+    }
+
+
+    .filter-section {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
 }
 
-/* Customer Info Styles */
-.customer-info {
-    line-height: 1.4;
+.filter-form {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    flex-wrap: wrap;
 }
 
-.customer-info strong {
-    color: #2c3e50;
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.customer-email {
-    color: #6c757d;
-    font-size: 0.9rem;
-    margin-top: 0.25rem;
+.filter-group label {
+    font-weight: 500;
+    color: #666;
+}
+
+.filter-group input,
+.filter-group select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-width: 200px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: #0d6efd;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
 }
 </style>
 <div class="container">
@@ -253,7 +192,41 @@ tr:hover {
     
     <div class="card">
         <div class="card-header">
-            <h1 class="card-title">Order Status Management</h1>
+            <div class="filter-section">
+                <form action="/admin/orderList" method="GET" class="filter-form">
+                    <div class="filter-group">
+                        <label for="startDate">From Date:</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control" 
+                            value="<%= locals.filters?.startDate || '' %>">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="endDate">To Date:</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control"
+                            value="<%= locals.filters?.endDate || '' %>">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="status">Status:</label>
+                        <select id="status" name="status" class="form-control">
+                            <option value="">All Status</option>
+                            <option value="pending" <%= locals.filters?.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                            <option value="processing" <%= locals.filters?.status === 'processing' ? 'selected' : '' %>>Processing</option>
+                            <option value="shipped" <%= locals.filters?.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                            <option value="delivered" <%= locals.filters?.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                            <option value="cancelled" <%= locals.filters?.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                            <option value="Return Request" <%= locals.filters?.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
+                            <option value="Returned" <%= locals.filters?.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                        </select>
+                    </div>
+            
+                    <div class="filter-buttons">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <a href="/admin/orderList" class="btn btn-secondary">Reset</a>
+                    </div>
+                </form>
+            </div>
+            <h1 class="card-title">Order lists</h1>
         </div>
         
         <div class="table-container">
@@ -266,6 +239,7 @@ tr:hover {
                         <th>Current Status</th>
                         <th>Update Status</th>
                         <th>Order Date</th>
+                        <th>Order Details</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -285,22 +259,38 @@ tr:hover {
                             </td>
                             <td><%= order.status %></td>
                             <td>
-                                <select id="status-<%= order._id %>" class="status-select"   <%= order.status === 'cancelled' ? 'disabled' : '' %> >
-                                    <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
-                                    <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>>Processing</option>
-                                    <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
-                                    <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
-                                    <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                    <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
-                                    <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                <select id="status-<%= order._id %>" class="status-select">
+                                    <% if (order.status === 'delivered' || order.status === 'Return Request' || order.status === 'Returned') { %>
+                                        <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
+                                        <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                    <% } else if (order.status === 'shipped') { %>
+                                        <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                                        <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                        <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %>>Return Request</option>
+                                        <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                    <% } else if (order.status === 'Returned') { %>
+                                        <option value="Returned" <%= order.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                    <% } else { %>
+                                        <option value="pending" <%= order.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                        <option value="processing" <%= order.status === 'processing' ? 'selected' : '' %>>Processing</option>
+                                        <option value="shipped" <%= order.status === 'shipped' ? 'selected' : '' %>>Shipped</option>
+                                        <option value="delivered" <%= order.status === 'delivered' ? 'selected' : '' %>>Delivered</option>
+                                        <option value="cancelled" <%= order.status === 'cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                    <% } %>
                                 </select>
-                                <button class="save-btn" 
-                                        onclick="updateStatus('<%= order._id %>')"  
-                                        <%= order.status === 'cancelled' ? 'disabled' : '' %> >
+                                <button class="save-btn" onclick="updateStatus('<%= order._id %>')" 
+                                    <%= order.status === 'cancelled' ? 'disabled' : '' %>>
                                     Update
                                 </button>
+                            
+                                
                             </td>
                             <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                            <td>
+                                <button class="view-details-btn" onclick="window.location.href='/admin/orderList/details/<%= order._id %>'">
+                                    View Details
+                                </button>
+                            </td>
                         </tr>
                     <% }); %>
                 </tbody>
@@ -319,6 +309,8 @@ tr:hover {
         </div>
     </div>
 </div>
+
+
 
 <script>
 function showAddressDetails(addressData) {
@@ -342,6 +334,8 @@ function showAddressDetails(addressData) {
     }
 }
 
+
+
 async function updateStatus(orderId) {
     const selectElement = document.getElementById(`status-${orderId}`);
     const newStatus = selectElement.value;
@@ -360,10 +354,36 @@ async function updateStatus(orderId) {
         if (data.success) {
             const successMessage = document.getElementById('successMessage');
             successMessage.style.display = 'block';
+
+            // Find and update the status cell
+            const statusCell = selectElement.closest('tr').querySelector('td:nth-child(4)');
+            statusCell.textContent = newStatus;
+            
+            // If status is delivered, Return Request, or Returned, modify select options
+            if (newStatus === 'delivered' || newStatus === 'Return Request' ) {
+                selectElement.innerHTML = `
+                    <option value="Return Request" ${newStatus === 'Return Request' ? 'selected' : ''}>Return Request</option>
+                    <option value="Returned" ${newStatus === 'Returned' ? 'selected' : ''}>Returned</option>
+                `;
+            } else if (newStatus === 'shipped') {
+                selectElement.innerHTML = `
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="Return Request">Return Request</option>
+                    <option value="Returned">Returned</option>
+                `;
+            } else if (newStatus === 'Returned') {
+                selectElement.innerHTML = `
+                    <option value="Returned">Returned</option>
+                `;
+            } else if (newStatus === 'cancelled') {
+                selectElement.innerHTML = `
+                    <option value="cancelled" selected>Cancelled</option>
+                `;
+            }
+            
             setTimeout(() => {
                 successMessage.style.display = 'none';
-                // Refresh the page to show updated status
-                window.location.reload();
             }, 1000);
         } else {
             throw new Error(data.message || 'Failed to update status');
@@ -373,6 +393,20 @@ async function updateStatus(orderId) {
         alert('Failed to update order status');
     }
 }
+
+// Add this function to handle initial page load status
+document.addEventListener('DOMContentLoaded', () => {
+    const selects = document.querySelectorAll('.status-select');
+    selects.forEach(select => {
+        const currentStatus = select.value;
+        if (currentStatus === 'delivered' || currentStatus === 'Return Request' || currentStatus === 'Returned') {
+            select.innerHTML = `
+                <option value="Return Request" ${currentStatus === 'Return Request' ? 'selected' : ''}>Return Request</option>
+                <option value="Returned" ${currentStatus === 'Returned' ? 'selected' : ''}>Returned</option>
+            `;
+        }
+    });
+});
 
 function closeAddressModal() {
     const modal = document.getElementById('addressModal');

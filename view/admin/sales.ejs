@@ -1,0 +1,669 @@
+<%- include("../../view/partials/admin/header") %>
+
+<style>
+:root {
+    --black: #000000;
+    --white: #ffffff;
+    --gray-dark: #1c1c1c;
+    --gray-light: #2e2e2e;
+    --accent: #d4af37; /* Gold accent */
+}
+
+body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Arial', sans-serif;
+}
+
+.container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h2 {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: var(--accent);
+}
+
+/* Statistics Cards */
+.stats-cards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card {
+    background: var(--gray-dark);
+    color: var(--white);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.1);
+    min-width: 250px;
+    text-align: center;
+}
+
+.card-title {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 22px;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+/* Filters */
+.filter-section {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    background: var(--gray-light);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filter-group label {
+    font-weight: bold;
+}
+
+.filter-group input,
+.filter-group select {
+    background: var(--gray-dark);
+    color: var(--white);
+    border: 1px solid var(--accent);
+    padding: 8px;
+    border-radius: 5px;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    border: none;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: var(--black);
+}
+
+.btn-primary:hover {
+    background: #b88900;
+}
+
+.btn-secondary {
+    background: var(--gray-dark);
+    color: var(--white);
+}
+
+.btn-secondary:hover {
+    background: var(--gray-light);
+}
+
+/* Table */
+.table-container {
+    overflow-x: auto;
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--gray-dark);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid var(--gray-light);
+}
+
+th {
+    background: var(--accent);
+    color: var(--black);
+}
+
+td {
+    background: var(--gray-dark);
+    color: var(--white);
+}
+
+tr:hover {
+    background: var(--gray-light);
+}
+
+/* Download Section */
+.download-section {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+@media (max-width: 768px) {
+    .stats-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* Dropdown Styling */
+#reportType {
+    background: var(--gray-dark);
+    color: var(--white);
+    border: 1px solid var(--accent);
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    max-width: 250px; /* Adjust dropdown width */
+}
+
+/* Custom Date Filter Section */
+#customDateFilters {
+    padding: 10px;
+    background: var(--gray-light);
+    border-radius: 5px;
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Smaller Date Input Fields */
+#customDateFilters input {
+    background: var(--gray-dark);
+    color: var(--white);
+    border: 1px solid var(--accent);
+    padding: 6px;
+    border-radius: 5px;
+    font-size: 14px;
+    width: 130px; /* Smaller width */
+}
+
+/* Adjust Label for Better Spacing */
+label {
+    font-weight: bold;
+    color: var(--accent);
+    font-size: 14px;
+}
+
+</style>
+
+<div class="sales-report-container p-4">
+    <h2 class="mb-4">Sales Report</h2>
+
+    <div class="stats-cards row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Orders</h5>
+                    <p class="card-text"><%= stats.totalOrders %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Sales</h5>
+                    <p class="card-text">₹<%= stats.totalAmount.toFixed(2) %></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Discounts</h5>
+                    <p class="card-text">₹<%= stats.totalDiscount.toFixed(2) %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <div class="controls-section mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="generateReport('daily')">Daily</button>
+                    <button class="btn btn-primary" onclick="generateReport('weekly')">Weekly</button>
+                    <button class="btn btn-primary" onclick="generateReport('monthly')">Monthly</button>
+                    <button class="btn btn-primary" onclick="generateReport('yearly')">Yearly</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="custom-date-range">
+                    <input type="date" id="startDate" class="form-control">
+                    <input type="date" id="endDate" class="form-control">
+                    <button class="btn btn-primary" onclick="generateCustomReport()">Generate</button>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+
+    <!-- <div class="controls-section mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="reportType" class="form-label">Select Report Type:</label>
+                <select id="reportType" class="form-control" onchange="handleReportChange()">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="custom">Custom Date Range</option>
+                </select>
+            </div>
+    
+            <div class="col-md-6" id="customDateFilters" style="display: none;">
+                <label for="startDate" class="form-label">Start Date:</label>
+                <input type="date" id="startDate" class="form-control" onchange="generateCustomReport()">
+                
+                <label for="endDate" class="form-label mt-2">End Date:</label>
+                <input type="date" id="endDate" class="form-control" onchange="generateCustomReport()">
+            </div>
+        </div>
+    </div> -->
+    
+
+    <div class="controls-section mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="reportType" class="form-label">Select Report Type:</label>
+                <select id="reportType" class="form-control" onchange="handleReportTypeChange()">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                    <option value="custom">Custom Date Range</option>
+                </select>
+            </div>
+    
+            <div class="col-md-6" id="customDateFilters" style="display: none;">
+                <label for="startDate" class="form-label">Start Date:</label>
+                <input type="date" id="startDate" class="form-control">
+                
+                <label for="endDate" class="form-label mt-2">End Date:</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+        </div>
+        
+        <div class="row mt-3">
+            <div class="col-12 text-center">
+                <button class="btn btn-primary" onclick="generateReport()">
+                    <i class="fas fa-sync"></i> Generate Report
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="download-section mb-4">
+        <button class="btn btn-success" onclick="downloadReport('excel')">
+            <i class="fas fa-file-excel"></i> Download Excel
+        </button>
+        <button class="btn btn-danger" onclick="downloadReport('pdf')">
+            <i class="fas fa-file-pdf"></i> Download PDF
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Products</th>
+                    <th>Amount</th>
+                    <th>Discount</th>
+                    <th>Final Amount</th>
+                    <th>Payment Method</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+                <% if (orders.length > 0) { %>
+                    <% orders.forEach(order => { %>
+                        <tr>
+                            <td><%= order._id %></td>
+                            <td><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                            <td><%= order.address.name %></td>
+                            <td>
+                                <%= order.orderedItems.map(item => {
+                                    const productName = item.product?.productName || 'Unknown';
+                                    const size = item.size ? ` (${item.size})` : '';
+                                    const quantity = ` x${item.quantity}`;
+                                    return productName + size + quantity;
+                                }).join(', ') %>
+                            </td>
+                            <td>₹<%= order.orderedItems.reduce((sum, item) => 
+                                sum + (item.product?.regularPrice * item.quantity || 0), 0) %></td>
+                            <td>₹<%= (
+                                // Coupon discount
+                                (order.couponDetails?.discountAmount || 0) + 
+                                // Product level discounts
+                                order.orderedItems.reduce((sum, item) => {
+                                    const regularPrice = item.product?.regularPrice || 0;
+                                    const salePrice = item.product?.salePrice || 0;
+                                    return sum + ((regularPrice - salePrice) * item.quantity);
+                                }, 0)
+                            ).toFixed(2) %></td>
+                            <td>₹<%= order.finalAmount %></td>
+                            <td><%= order.PaymentMethod %></td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr><td colspan="8">No orders found</td></tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+
+function updateTable(data) {
+    if (!data.success || !data.orders) return;
+    
+    const tableBody = document.getElementById('ordersTableBody');
+    tableBody.innerHTML = '';
+    
+    let totalAmount = 0;
+    let totalDiscount = 0;
+    
+    data.orders.forEach(order => {
+        const products = order.orderedItems
+            .map(item => {
+                const productName = item.product?.productName || 'Unknown';
+                const size = item.size ? ` (${item.size})` : '';
+                const quantity = ` x${item.quantity}`;
+                return productName + size + quantity;
+            })
+            .join(', ');
+            
+        totalAmount += order.finalAmount || 0;
+        totalDiscount += order.totalDiscount || 0;
+
+        const row = `
+            <tr>
+                <td>${order._id}</td>
+                <td>${new Date(order.createdOn).toLocaleDateString()}</td>
+                <td>${order.address.name}</td>
+                <td>${products}</td>
+                <td>₹${(order.finalAmount + order.totalDiscount).toFixed(2)}</td>
+                <td>₹${order.totalDiscount.toFixed(2)}</td>
+                <td>₹${order.finalAmount.toFixed(2)}</td>
+                <td>${order.PaymentMethod}</td>
+            </tr>
+        `;
+        tableBody.innerHTML += row;
+    });
+
+    // Update stats cards
+    document.querySelector('.stats-cards').innerHTML = `
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Orders</h5>
+                    <p class="card-text">${data.orders.length}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Sales</h5>
+                    <p class="card-text">₹${totalAmount.toFixed(2)}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Discounts</h5>
+                    <p class="card-text">₹${totalDiscount.toFixed(2)}</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+
+// function handleReportChange() {
+//         const reportType = document.getElementById('reportType').value;
+//         const customDateFilters = document.getElementById('customDateFilters');
+
+//         if (reportType === 'custom') {
+//             customDateFilters.style.display = 'block';
+//         } else {
+//             customDateFilters.style.display = 'none';
+//             fetchReport(reportType);
+//         }
+//     }
+
+//...............................//
+
+    // function fetchReport(type) {
+    //     fetch('/generate-report', {
+    //         method: 'POST',
+    //         headers: { 'Content-Type': 'application/json' },
+    //         body: JSON.stringify({ type })
+    //     })
+    //     .then(res => res.json())
+    //     .then(updateTable)
+    //     .catch(console.error);
+    // }
+
+//     function generateCustomReport() {
+//         const startDate = document.getElementById('startDate').value;
+//         const endDate = document.getElementById('endDate').value;
+        
+//         if (!startDate || !endDate) return;
+
+//         fetch('/custom-report', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ startDate, endDate })
+//         })
+//         .then(res => res.json())
+//         .then(updateTable)
+//         .catch(console.error);
+//     }
+
+//     function downloadReport(format) {
+//     const reportType = document.getElementById('reportType').value;
+//     let downloadUrl = '';
+
+//     if (reportType === 'custom') {
+//         const startDate = document.getElementById('startDate').value;
+//         const endDate = document.getElementById('endDate').value;
+        
+//         if (!startDate || !endDate) {
+//             alert('Please select both start and end dates');
+//             return;
+//         }
+        
+//         downloadUrl = `/admin/download-report/${reportType}/${format}?startDate=${startDate}&endDate=${endDate}`;
+//     } else {
+//         downloadUrl = `/admin/download-report/${reportType}/${format}`;
+//     }
+
+//     fetch(downloadUrl)
+//         .then(response => {
+//             if (!response.ok) {
+//                 throw new Error(`HTTP error! status: ${response.status}`);
+//             }
+//             return response.blob();
+//         })
+//         .then(blob => {
+//             const url = window.URL.createObjectURL(blob);
+//             const a = document.createElement('a');
+//             const fileName = `sales_report_${reportType}_${new Date().toISOString().split('T')[0]}.${format === 'excel' ? 'xlsx' : 'pdf'}`;
+            
+//             a.href = url;
+//             a.download = fileName;
+//             document.body.appendChild(a);
+//             a.click();
+            
+//             // Cleanup
+//             setTimeout(() => {
+//                 window.URL.revokeObjectURL(url);
+//                 document.body.removeChild(a);
+//             }, 0);
+//         })
+//         .catch(error => {
+//             console.error('Download error:', error);
+//             alert(`Failed to download report: ${error.message}`);
+//         });
+// }
+
+
+// function handleReportChange() {
+//     const reportType = document.getElementById('reportType').value;
+//     const customDateFilters = document.getElementById('customDateFilters');
+
+//     if (reportType === 'custom') {
+//         customDateFilters.style.display = 'block';
+//     } else {
+//         customDateFilters.style.display = 'none';
+//         fetchReport(reportType);
+//     }
+// }
+
+
+function handleReportTypeChange() {
+    const reportType = document.getElementById('reportType').value;
+    const customDateFilters = document.getElementById('customDateFilters');
+
+    if (reportType === 'custom') {
+        customDateFilters.style.display = 'block';
+    } else {
+        customDateFilters.style.display = 'none';
+    }
+}
+
+function generateReport() {
+    const reportType = document.getElementById('reportType').value;
+    
+    if (reportType === 'custom') {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        
+        if (!startDate || !endDate) {
+            alert('Please select both start and end dates');
+            return;
+        }
+        
+        fetch('/admin/generate-report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                type: reportType,
+                startDate,
+                endDate
+            })
+        })
+        .then(res => res.json())
+        .then(updateTable)
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to generate report');
+        });
+    } else {
+        fetch('/admin/generate-report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: reportType })
+        })
+        .then(res => res.json())
+        .then(updateTable)
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to generate report');
+        });
+    }
+}
+
+// Update the download function to only work after generation
+function downloadReport(format) {
+    const reportType = document.getElementById('reportType').value;
+    const tableBody = document.getElementById('ordersTableBody');
+    
+    // Check if there's data to download
+    if (tableBody.children.length === 0 || 
+        (tableBody.children.length === 1 && tableBody.children[0].textContent.includes('No orders found'))) {
+        alert('Please generate a report first before downloading');
+        return;
+    }
+
+    let downloadUrl = '';
+
+    if (reportType === 'custom') {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+        
+        if (!startDate || !endDate) {
+            alert('Please select both start and end dates');
+            return;
+        }
+        
+        downloadUrl = `/admin/download-report/${reportType}/${format}?startDate=${startDate}&endDate=${endDate}`;
+    } else {
+        downloadUrl = `/admin/download-report/${reportType}/${format}`;
+    }
+
+    fetch(downloadUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const fileName = `sales_report_${reportType}_${new Date().toISOString().split('T')[0]}.${format === 'excel' ? 'xlsx' : 'pdf'}`;
+            
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Cleanup
+            setTimeout(() => {
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            }, 0);
+        })
+        .catch(error => {
+            console.error('Download error:', error);
+            alert(`Failed to download report: ${error.message}`);
+        });
+}
+
+</script>
+
+
+<%- include("../../view/partials/admin/footer") %>

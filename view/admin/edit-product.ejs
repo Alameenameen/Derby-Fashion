@@ -3,32 +3,166 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" rel="stylesheet">
 </head>
 <style>
-   .error-message {
-       color: red;
-   }
-
-   .thumbnails-container {
-       display: flex;
-       overflow-x: auto;
-   }
-
-   .thumbnail {
-       margin-right: 10px;
-   }
-
-   .crop-container {
-       max-width: 300px;
-       margin: 15px 0;
-   }
-
-   .croppie-wrapper {
-       height: 300px;
-   }
-
-   #images-container {
-       margin-top: 20px;
-   }
-</style>
+    /* Main Layout */
+    .content-main {
+      padding: 2rem;
+      background-color: #f8f9fa;
+    }
+  
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      padding: 2rem;
+    }
+  
+    /* Form Elements */
+    .form-label {
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+  
+    .form-control,
+    .form-select {
+      width: 100%;
+      padding: 0.875rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+  
+    .form-control:focus,
+    .form-select:focus {
+      border-color: #2c2c2c;
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+      outline: none;
+    }
+  
+    /* Section Headers */
+    .section-title {
+      color: #1a1a1a;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 2rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e0e0e0;
+    }
+  
+    /* Image Preview */
+    .image-preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+  
+    .preview-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
+    }
+  
+    .preview-image {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+  
+    /* Delete Button */
+    .delete-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background-color: #2c2c2c;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+  
+    .delete-btn:hover {
+      background-color: #1a1a1a;
+    }
+  
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+  
+    .btn-primary {
+      background-color: #2c2c2c;
+      color: white;
+      border: none;
+    }
+  
+    .btn-primary:hover {
+      background-color: #1a1a1a;
+      transform: translateY(-1px);
+    }
+  
+    .btn-danger {
+      background-color: #1a1a1a;
+      color: white;
+      border: none;
+    }
+  
+    .btn-danger:hover {
+      background-color: #000000;
+      transform: translateY(-1px);
+    }
+  
+    /* Error Messages */
+    .error-message {
+      color: #dc2626;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+  
+    /* Price Inputs Container */
+    .price-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+  
+    /* File Upload */
+    .file-upload {
+      border: 2px dashed #e0e0e0;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+  
+    .file-upload:hover {
+      border-color: #2c2c2c;
+    }
+  
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .content-main {
+        padding: 1rem;
+      }
+      
+      .product-card {
+        padding: 1rem;
+      }
+    }
+  </style>
 
 <section class="content-main">
     <div class="row">
@@ -59,7 +193,8 @@
                                 <option value="">Select Brand</option>
                                 <% brands.forEach(brand => { %>
                                     <% if (!brand.isBlocked) { %>
-                                        <option value="<%= brand._id %>" <%= product.brand.equals(brand._id) ? 'selected' : '' %>><%= brand.brandName %></option>
+                                        <option value="<%= brand._id %>"  <%= (product.brand && product.brand._id && product.brand._id.toString() === brand._id.toString()) ? 'selected' : '' %>>
+                                            <%= brand.brandName %></option>
                                     <% } %>
                                 <% }); %>
                             </select>
@@ -72,11 +207,11 @@
                                 <input placeholder="₹" name="regularPrice" type="number" value="<%= product.regularPrice %>" class="form-control border" required>
                                 <div id="regularPrice-error" class="error-message"></div>
                             </div>
-                            <div class="col-lg-4 mb-4">
+                            <!-- <div class="col-lg-4 mb-4">
                                 <label class="form-label">Sale Price</label>
                                 <input placeholder="₹" name="salePrice" type="number" value="<%= product.salePrice %>" class="form-control border">
                                 <div id="salePrice-error" class="error-message"></div>
-                            </div>
+                            </div> -->
                         </div>
 
                         <!-- <div class="col-lg-4 mb-4">
@@ -408,74 +543,7 @@ function updateSizesArray() {
     sizesArrayInput.value = JSON.stringify(sizesArray);
 }
 
-// function validateForm() {
-//    let imageDatas = false
-//            console.log("validate form");
-//            clearErrorMessages();
-//            const name = document.getElementsByName('productName')[0].value;
-//            const description = document.getElementsByName('description')[0].value;
-//            const brand = document.getElementsByName('brand')[0].value;
-//            const price = document.getElementsByName('regularPrice')[0].value;
-//            const saleprice = document.getElementsByName('salePrice')[0].value;
-//            const color = document.getElementsByName('color')[0].value;
-//            const category = document.getElementsByName('category')[0].value;
-//            const images = document.getElementById('input1')
-//            const quantity=document.getElementsByName('quantity')
-// imageDatas = document.getElementById("imageDatas")?.value;
-//            let isValid = true;    
-//            if (name.trim() === "") {
-//    displayErrorMessage('productName-error', 'Please enter a product name.');
-//    isValid = false;
-// }
-          
-// console.log("description new", description)
 
-//            if (description=== '') {
-//                displayErrorMessage('description-error', 'Please enter a product description.');
-//                isValid = false;
-//            } 
-
-
-//            if ( parseInt(quantity) < 0) {
-//                displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-//                isValid = false;
-//            }
-
-
-
-
-//            if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-//                displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-//                isValid = false;
-//            }
-//           if (!/^\d+(\.\d{1,2})?$/.test(saleprice) || parseFloat(saleprice) < 0) {
-//                displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
-//                isValid = false;
-//            }
-          
-//            if (!imageDatas && images.files.length === 0) {
-//                displayErrorMessage("images-error",'Please select an image.');
-//                isValid = false;
-//            }
-//            return isValid;
-//        }
-      
-//        function displayErrorMessage(elementId, message) {
-//            var errorElement = document.getElementById(elementId);
-//            errorElement.innerText = message;
-//            errorElement.style.display = "block";
-//        }
-
-
-//        function clearErrorMessages() {
-//            const errorElements = document.getElementsByClassName('error-message');
-//            Array.from(errorElements).forEach(element => {
-//                element.innerText = '';
-//            });
-//            const errorMessage = document.getElementById('errorMessage');
-
-
-//        }
 
 
 

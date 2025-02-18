@@ -1,4 +1,4 @@
-<%-include("../../view/partials/user/header")%>
+<%-include("../../view/partials/user/header")%> 
 
 <!-- Breadcrumb Start -->
 <div class="container-fluid">
@@ -14,9 +14,7 @@
 </div>
 <!-- Breadcrumb End -->
 
-
-
-
+<!-- Search Results (if any) -->
 <% if (locals.searchQuery) { %>
     <div class="container-fluid">
         <div class="row px-xl-5">
@@ -34,251 +32,246 @@
 
 <!-- Shop Start -->
 <div class="container-fluid">
-    <!-- <div class="row px-xl-5">
-        Shop Sidebar Start
-         <div class="col-lg-3 col-md-4">
-            Price Start
-            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by price</span></h5>
-            <div class="bg-light p-4 mb-30">
-                <form>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" checked id="price-all">
-                        <label class="custom-control-label" for="price-all">All Price</label>
-                        <span class="badge border font-weight-normal">1000</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="price-1">
-                        <label class="custom-control-label" for="price-1">$0 - $100</label>
-                        <span class="badge border font-weight-normal">150</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="price-2">
-                        <label class="custom-control-label" for="price-2">$100 - $200</label>
-                        <span class="badge border font-weight-normal">295</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="price-3">
-                        <label class="custom-control-label" for="price-3">$200 - $300</label>
-                        <span class="badge border font-weight-normal">246</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="price-4">
-                        <label class="custom-control-label" for="price-4">$300 - $400</label>
-                        <span class="badge border font-weight-normal">145</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                        <input type="checkbox" class="custom-control-input" id="price-5">
-                        <label class="custom-control-label" for="price-5">$400 - $500</label>
-                        <span class="badge border font-weight-normal">168</span>
-                    </div>
-                </form>
+    <div class="row px-xl-5">
+        <!-- Left Sidebar -->
+        <div class="col-lg-3 col-md-4">
+            <!-- Categories Section -->
+            <div class="mb-4">
+                <h5 class="section-title position-relative text-uppercase mb-3">
+                    <span class="bg-secondary pr-3">Categories</span>
+                </h5>
+                <div class="bg-light p-4">
+                    <% categories.forEach(category => { %>
+                        <a href="/shop?category=<%= category._id %>"
+                           class="d-block text-dark mb-2 <%= categoryId === category._id.toString() ? 'font-weight-bold' : '' %>">
+                            <%= category.name %>
+                        </a>
+                    <% }) %>
+                </div>
             </div>
-            Price End
-            
-            Color Start
-            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by color</span></h5>
-            <div class="bg-light p-4 mb-30">
-                <form>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" checked id="color-all">
-                        <label class="custom-control-label" for="price-all">All Color</label>
-                        <span class="badge border font-weight-normal">1000</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-1">
-                        <label class="custom-control-label" for="color-1">Black</label>
-                        <span class="badge border font-weight-normal">150</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-2">
-                        <label class="custom-control-label" for="color-2">White</label>
-                        <span class="badge border font-weight-normal">295</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-3">
-                        <label class="custom-control-label" for="color-3">Red</label>
-                        <span class="badge border font-weight-normal">246</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="color-4">
-                        <label class="custom-control-label" for="color-4">Blue</label>
-                        <span class="badge border font-weight-normal">145</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                        <input type="checkbox" class="custom-control-input" id="color-5">
-                        <label class="custom-control-label" for="color-5">Green</label>
-                        <span class="badge border font-weight-normal">168</span>
-                    </div>
-                </form>
-            </div>
-            Color End
 
-            Size Start
-            <h5 class="section-title position-relative text-uppercase mb-3"><span class="bg-secondary pr-3">Filter by size</span></h5>
-            <div class="bg-light p-4 mb-30">
-                <form>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" checked id="size-all">
-                        <label class="custom-control-label" for="size-all">All Size</label>
-                        <span class="badge border font-weight-normal">1000</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-1">
-                        <label class="custom-control-label" for="size-1">XS</label>
-                        <span class="badge border font-weight-normal">150</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-2">
-                        <label class="custom-control-label" for="size-2">S</label>
-                        <span class="badge border font-weight-normal">295</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-3">
-                        <label class="custom-control-label" for="size-3">M</label>
-                        <span class="badge border font-weight-normal">246</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
-                        <input type="checkbox" class="custom-control-input" id="size-4">
-                        <label class="custom-control-label" for="size-4">L</label>
-                        <span class="badge border font-weight-normal">145</span>
-                    </div>
-                    <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between">
-                        <input type="checkbox" class="custom-control-input" id="size-5">
-                        <label class="custom-control-label" for="size-5">XL</label>
-                        <span class="badge border font-weight-normal">168</span>
-                    </div>
-                </form>
-            </div>
-            Size End
-        </div> -->
-        <!-- Shop Sidebar End -->
+            <!-- Filter Section -->
+            <div class="mb-4">
+                <h5 class="section-title position-relative text-uppercase mb-3">
+                    <span class="bg-secondary pr-3">Filter by</span>
+                </h5>
+                <div class="bg-light p-4">
+                    <form id="filterForm">
+                        <!-- Filter Options -->
+                        <div class="mb-3">
+                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                <input type="checkbox" class="custom-control-input" id="filter-new">
+                                <label class="custom-control-label" for="filter-new">New Arrivals</label>
+                            </div>
+                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                <input type="checkbox" class="custom-control-input" id="filter-popular">
+                                <label class="custom-control-label" for="filter-popular">Popular Items</label>
+                            </div>
+                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                <input type="checkbox" class="custom-control-input" id="filter-featured">
+                                <label class="custom-control-label" for="filter-featured">Featured Items</label>
+                            </div>
+                        </div>
 
-<div class="col-lg-9 col-md-8">
-    <div class="row pb-3">
-        <div class="col-12 pb-1">
+                        <!-- Price Section -->
+                        <div class="mb-3">
+                            <h6 class="text-uppercase mb-3">Price</h6>
+                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                <input type="checkbox" class="custom-control-input" id="price-low-high">
+                                <label class="custom-control-label" for="price-low-high">Low to High</label>
+                            </div>
+                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                <input type="checkbox" class="custom-control-input" id="price-high-low">
+                                <label class="custom-control-label" for="price-high-low">High to Low</label>
+                            </div>
+                        </div>
+
+                        <!-- Name Section -->
+                        <div class="mb-3">
+                            <h6 class="text-uppercase mb-3">Name</h6>
+                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                <input type="checkbox" class="custom-control-input" id="name-asc">
+                                <label class="custom-control-label" for="name-asc">A to Z</label>
+                            </div>
+                            <div class="custom-control custom-checkbox d-flex align-items-center justify-content-between mb-3">
+                                <input type="checkbox" class="custom-control-input" id="name-desc">
+                                <label class="custom-control-label" for="name-desc">Z to A</label>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-block" id="applyFilter">Apply Filter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-lg-9 col-md-8">
+            <!-- Sort Options -->
             <div class="d-flex align-items-center justify-content-between mb-4">
-                <div>
+                <div class="btn-group">
                     <button class="btn btn-sm btn-light"><i class="fa fa-th-large"></i></button>
                     <button class="btn btn-sm btn-light ml-2"><i class="fa fa-bars"></i></button>
                 </div>
-                <div class="ml-2">
-
-
-
-                    <!-- //sorting -->
-                    <div class="btn-group">
-    <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">
-        Sorting
-    </button>
-    <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item <%= currentSort === 'new-arrivals' ? 'active' : '' %>" 
-           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=new-arrivals&page=1">
-            New Arrivals
-        </a>
-        <a class="dropdown-item <%= currentSort === 'popularity' ? 'active' : '' %>"
-           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=popularity&page=1">
-            Popularity
-        </a>
-        <a class="dropdown-item <%= currentSort === 'price-low-high' ? 'active' : '' %>"
-           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=price-low-high&page=1">
-            Price: Low to High
-        </a>
-        <a class="dropdown-item <%= currentSort === 'price-high-low' ? 'active' : '' %>"
-           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=price-high-low&page=1">
-            Price: High to Low
-        </a>
-        <a class="dropdown-item <%= currentSort === 'rating' ? 'active' : '' %>"
-           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=rating&page=1">
-            Average Rating
-        </a>
-        <a class="dropdown-item <%= currentSort === 'featured' ? 'active' : '' %>"
-           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=featured&page=1">
-            Featured
-        </a>
-        <a class="dropdown-item <%= currentSort === 'name-asc' ? 'active' : '' %>"
-           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=name-asc&page=1">
-            Name: A to Z
-        </a>
-        <a class="dropdown-item <%= currentSort === 'name-desc' ? 'active' : '' %>"
-           href="?<%= categoryId ? 'category=' + categoryId + '&' : '' %>sort=name-desc&page=1">
-            Name: Z to A
-        </a>
-    </div>
-</div>
-
-<!-- 
-                    <div class="btn-group ml-2">
-                        <button type="button" class="btn btn-sm btn-light dropdown-toggle" data-toggle="dropdown">Showing</button>
-                        <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="#">10</a>
-                            <a class="dropdown-item" href="#">20</a>
-                            <a class="dropdown-item" href="#">30</a>
-                        </div>
-                    </div> -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Shop Start -->
-        <div class="container-fluid">
-            <div class="row">
-                <!-- Sidebar for Categories -->
-                <div class="col-lg-3">
-                    <h5 class="section-title position-relative text-uppercase mb-3">
-                        <span class="bg-secondary pr-3">Categories</span>
-                    </h5>
-                    <div class="bg-light p-4">
-                        <% categories.forEach(category => { %>
-                        <a href="/shop?category=<%= category._id %>" 
-                           class="d-block text-dark <%= categoryId === category._id.toString() ? 'font-weight-bold' : '' %>">
-                            <%= category.name %>
-                        </a>
-                        <% }) %>
+                <div class="dropdown ml-2">
+                    <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-toggle="dropdown">
+                        Sorting
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="#">Latest</a>
+                        <a class="dropdown-item" href="#">Price Low to High</a>
+                        <a class="dropdown-item" href="#">Price High to Low</a>
                     </div>
                 </div>
-        
-                <!-- Product Listing -->
-                <div class="col-lg-9">
-                    <% if (currentCategory) { %>
-                        <h4 class="mb-4">Products in <%= currentCategory.name %></h4>
-                    <% } else { %>
-                        <h4 class="mb-4">All Products</h4>
-                    <% } %>
-        
-                    <div class="row">
-                        <% products.forEach(product => { %>
-                        <div class="col-lg-4 col-md-6 col-sm-6 pb-1">
-                            <div class="product-item bg-light mb-4">
+            </div>
+
+            <!-- Products Grid -->
+            <!-- <div class="row">
+                <% products.forEach(product => { %>
+                    <% if (!product.isBlocked) { %> 
+                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
+                        <div class="product-item bg-light mb-4">
+                            <div class="product-img position-relative overflow-hidden">
                                 <a href="/productDetails?id=<%= product._id %>">
                                     <img class="img-fluid w-100" src="/uploads/<%= product.productImage[0] %>" alt="<%= product.productName %>">
                                 </a>
-                                <div class="text-center py-4">
-                                    <a href="/productDetails?id=<%= product._id %>">
-                                        <%= product.productName %>
-                                    </a>
-                                    <div class="d-flex align-items-center justify-content-center mt-2">
-                                        <h5>₹<%= product.salePrice %></h5>
-                                        <h6 class="text-muted ml-2"><del>₹<%= product.regularPrice %></del></h6>
-                                    </div>
+                            </div>
+                            <div class="text-center py-4">
+                                <a class="h6 text-decoration-none text-truncate" href="/productDetails?id=<%= product._id %>">
+                                    <%= product.productName %>
+                                </a>
+                                <div class="d-flex align-items-center justify-content-center mt-2">
+                                    <h5>₹<%= product.salePrice %></h5>
+                                    <h6 class="text-muted ml-2"><del>₹<%= product.regularPrice %></del></h6>
                                 </div>
                             </div>
                         </div>
-                        <% }) %>
                     </div>
-                </div>
+                    <% } %>
+                <% }) %>
+            </div> -->
+
+
+            <!-- <div class="row">
+                <% products.forEach(product => { %>
+                    <% if (!product.isBlocked) { %> 
+                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
+                        <div class="product-item bg-light mb-4">
+                            <div class="product-img position-relative overflow-hidden">
+                                <a href="/productDetails?id=<%= product._id %>">
+                                    <img class="img-fluid w-100" src="/uploads/<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                                </a>
+                            </div>
+                            <div class="text-center py-4">
+                                <a class="h6 text-decoration-none text-truncate" href="/productDetails?id=<%= product._id %>">
+                                    <%= product.productName %>
+                                </a>
+                                <%
+    // Fetch product-level offer
+    let productOffer = product.offer && product.offer.isActive ? product.offer.percentage : 0;
+
+    // Fetch category-level offer (fixing potential undefined issue)
+    let categoryOffer = (product.category && product.category.categoryOffer && product.category.categoryOffer.isActive) 
+                        ? product.category.categoryOffer.percentage 
+                        : 0;
+
+    // Compare the two offers and select the highest one
+    let displayOffer = Math.max(productOffer, categoryOffer);
+    let hasOffer = displayOffer > 0;
+%>
+
+<% if (hasOffer) { %>
+    <div class="offer-badge position-absolute bg-danger text-white px-2 py-1" style="top: 10px; left: 10px;">
+        <%= displayOffer %>% OFF
+    </div>
+<% } %>
+
+<div class="d-flex align-items-center justify-content-center mt-2">
+    <% if (hasOffer) { %>
+        <h5>₹<%= product.salePrice%></h5>
+        <h6 class="text-muted ml-2"><del>₹<%= product.regularPrice %></del></h6>
+    <% } else { %>
+        <h5>₹<%= product.salePrice %></h5>
+    <% } %>
+</div>
+
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+                <% }) %>
+            </div> -->
+            
+
+   
+            <div class="row">
+                <% for(let i = 0; i < products.length; i++) { 
+                    let productOffer = products[i].offer && products[i].offer.isActive ? products[i].offer.percentage : 0;
+                    
+                    let categoryOffer = products[i].category && products[i].category.categoryOffer && 
+                                      products[i].category.categoryOffer.isActive ? 
+                                      products[i].category.categoryOffer.percentage : 0;
+                    
+                    let displayOffer = 0;
+                    if (productOffer > 0 && categoryOffer > 0) {
+                        displayOffer = Math.max(productOffer, categoryOffer);
+                    } else if (productOffer > 0) {
+                        displayOffer = productOffer;
+                    } else if (categoryOffer > 0) {
+                        displayOffer = categoryOffer;
+                    }
+                    
+                    let hasOffer = displayOffer > 0;
+                %>
+                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
+                        <div class="product-item bg-light mb-4">
+                            <div class="product-img position-relative overflow-hidden">
+                                <a href="/productDetails?id=<%= products[i]._id %>">
+                                    <img class="img-fluid w-100" src="/uploads/<%= products[i].productImage[0] %>" alt="<%= products[i].productName %>">
+                                </a>
+
+                                <div class="product-action">
+                                    <!-- <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-shopping-cart"></i></a> -->
+                                    <a class="btn btn-outline-dark btn-square" onclick="addToWishlist('<%=products[i]._id%>')">
+                                        <i class="far fa-heart"></i>
+                                    </a>
+                                    <!-- <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-sync-alt"></i></a>
+                                    <a class="btn btn-outline-dark btn-square" href=""><i class="fa fa-search"></i></a> -->
+                                </div>
+                                <% if (hasOffer) { %>
+                                    <div class="offer-badge position-absolute bg-danger text-white px-2 py-1" style="top: 10px; left: 10px;">
+                                        <%= displayOffer %>% OFF
+                                    </div>
+                                <% } %>
+                            </div>
+                            <div class="text-center py-4">
+                                <a class="h6 text-decoration-none text-truncate" href="/productDetails?id=<%= products[i]._id %>">
+                                    <%= products[i].productName %>
+                                </a>
+                                <div class="d-flex align-items-center justify-content-center mt-2">
+                                    <% if (hasOffer) { %>
+                                        <h5>₹<%= products[i].salePrice %></h5>
+                                        <h6 class="text-muted ml-2"><del>₹<%= products[i].regularPrice %></del></h6>
+                                    <% } else { %>
+                                        <h5>₹<%= products[i].salePrice %></h5>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
             </div>
-        </div>
-        
+
 
             <!-- Pagination -->
             <% if (totalPages > 1) { %>
-                <div class="col-12">
+                <div class="d-flex justify-content-center mt-4">
                     <nav>
-                        <ul class="pagination justify-content-center">
+                        <ul class="pagination">
                             <% for(let i = 1; i <= totalPages; i++) { %>
                                 <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                    <a class="page-link" 
-                                       href="/shop?page=<%= i %><%= categoryId ? '&category=' + categoryId : '' %>">
+                                    <a class="page-link" href="/shop?page=<%= i %><%= categoryId ? '&category=' + categoryId : '' %>">
                                         <%= i %>
                                     </a>
                                 </li>
@@ -291,11 +284,59 @@
     </div>
 </div>
 <!-- Shop End -->
-    </div>
-</div>
-</div>
-</div>
-<!-- Shop End -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const filterForm = document.getElementById('filterForm');
+    const applyFilterBtn = document.getElementById('applyFilter');
+    const checkboxes = filterForm.querySelectorAll('input[type="checkbox"]');
 
+    // Ensure only one checkbox can be checked at a time
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked) {
+                checkboxes.forEach(cb => {
+                    if (cb !== this) cb.checked = false;
+                });
+            }
+        });
+    });
 
-<%-include("../../view/partials/user/footer")%>
+    // Apply filter when button is clicked
+    applyFilterBtn.addEventListener('click', function() {
+        const checkedBox = Array.from(checkboxes).find(cb => cb.checked);
+        if (!checkedBox) return;
+
+        // Map checkbox IDs to sort values
+        const sortMap = {
+            'filter-new': 'new-arrivals',
+            'filter-popular': 'popularity',
+            'filter-featured': 'featured',
+            'price-low-high': 'price-low-high',
+            'price-high-low': 'price-high-low',
+            'filter-rating': 'rating',
+            'name-asc': 'name-asc',
+            'name-desc': 'name-desc'
+        };
+
+        const sortValue = sortMap[checkedBox.id];
+        const params = new URLSearchParams(window.location.search);
+        
+        // Update sort parameter
+        params.set('sort', sortValue);
+        
+        // Maintain category if it exists
+        const categoryId = params.get('category');
+        if (categoryId) {
+            params.set('category', categoryId);
+        }
+        
+        // Reset to page 1 when filtering
+        params.set('page', '1');
+
+        // Redirect with new filter
+        window.location.href = `${window.location.pathname}?${params.toString()}`;
+    });
+});
+</script>
+
+<%-include("../../view/partials/user/footer")%> 

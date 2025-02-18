@@ -1,39 +1,53 @@
-
-const mongoose = require("mongoose")
-const {Schema} = mongoose;
+const mongoose = require('mongoose');
 
 const couponSchema = new mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
-        unique:true
+    name: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        uppercase: true
     },
-    createdOn:{
-        type:Date,
-        default:Date.now,
-        required:true
+    amountType: {
+        type: String,
+        enum: ['percentage', 'fixed'],
+        required: true
     },
-    expireOn:{
-        type:Date,
-        required:true
+    offerPrice: {
+        type: Number,
+        required: true,
+        min: 0
     },
-    offerPrice:{
-        type:Number,
-        required:true
+    minimumPrice: {
+        type: Number,
+        required: true,
+        min: 0
     },
-    minimumPrice:{
-        type:Number,
-        required:true
+    startOn: {
+        type: Date,
+        required: true
     },
-    isList:{
-        type:Boolean,
-        default:true
+    expireOn: {
+        type: Date,
+        required: true
     },
-    userId:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User'
-    }]
-})
+    isList: {
+        type: Boolean,
+        default: true
+    }
+}, { 
+    timestamps: true 
+});
+
+// Middleware to ensure expiry date is after start date
+couponSchema.pre('validate', function(next) {
+    if (this.expireOn <= this.startOn) {
+        next(new Error('Expiry date must be after start date'));
+    } else {
+        next();
+    }
+});
+
 
 const Coupon = mongoose.model("Coupon",couponSchema)
 

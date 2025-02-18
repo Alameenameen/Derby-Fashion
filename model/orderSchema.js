@@ -17,6 +17,10 @@ const orderSchema = new Schema({
             type:Number,
             required:true
         },
+        size: { // Track size for size-based quantities
+            type: String,
+            // required: true,
+        },
         price:{
             type:Number,
             default: 0
@@ -35,10 +39,7 @@ const orderSchema = new Schema({
     //     type:Number,
     //     default:0
     // },
-    size: { // Track size for size-based quantities
-        type: String,
-        // required: true,
-    },
+  
     finalAmount:{
         type:Number,
         // required:true
@@ -73,12 +74,59 @@ const orderSchema = new Schema({
         default:Date.now,
         required : true
     },
-    couponApplied:{
-        type:Boolean,
-        default:false
+    couponApplied: {
+        type: Boolean,
+        default: false
+    },
+    couponDetails: {
+        couponId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Coupon'
+        },
+        couponName: String,
+        discountAmount: Number
     },
     PaymentMethod:{
-        type:String
+        type:String,
+        enum: ['COD', 'Online', 'Wallet']
+    },
+    walletAmountUsed: {
+        type: Number,
+        default: 0
+    },
+    deliveredDate: Date,
+    returnRequestedAt: Date,
+    returnReason: {
+        type: String,
+        trim: true,
+        maxlength: 500 
+    },
+    razorpayOrderId: {   
+        type: String,
+        required: function() { return this.PaymentMethod !== "COD" && this.PaymentMethod !== "Wallet"; }
+    },
+    razorpayPaymentId: {  
+        type: String
+    },
+    refundStatus: {
+        isRefunded: {
+            type: Boolean,
+            default: false
+        },
+        refundedAmount: {
+            type: Number
+        },
+        refundedAt: {
+            type: Date
+        },
+        refundMethod: {
+            type: String,
+            enum: ['wallet', 'bank'],
+            default: 'wallet'
+        }
+    },
+    cancelledAt: {
+        type: Date
     }
 })
 

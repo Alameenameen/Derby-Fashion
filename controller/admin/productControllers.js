@@ -40,7 +40,7 @@ const addProducts = async (req, res) => {
             productName,
             description,
             regularPrice,
-            salePrice,
+            // salePrice,
             color,
             category,
             brand,
@@ -119,7 +119,7 @@ const addProducts = async (req, res) => {
             category: categoryData._id,
             brand: brandData._id,
             regularPrice,
-            salePrice,
+            salePrice : regularPrice,
             color,
             sizes: sizeQuantities,
             quantity: totalQuantity, // Store total quantity
@@ -174,6 +174,7 @@ const getAllProducts = async (req, res) => {
                 totalPages: Math.ceil(count / limit),
                 cat: category,
                 brands: brands, 
+                searchQuery: search 
             });
         } else {
             res.render("page-404");
@@ -186,131 +187,7 @@ const getAllProducts = async (req, res) => {
 
 
 
-//edit -- product --------------
 
-// const getEditProduct = async(req,res)=>{
-//     try {
-//         const id = req.query.id;
-//         const product = await Product.findOne({_id:id}).populate("category")
-//         const category = await Category.find({});
-//         console.log("Category: ", category)
-
-//         res.render("edit-product",{
-//             product:product,
-//             cat:category
-//         })
-//     } catch (error) {
-//         console.error("Error in editProduct:", error);
-//         res.redirect("/pageerror")
-//     }
-// }
-
-//edit products
-
-// const editProducts = async (req, res) => {
-//     try {
-//         const id = req.params.id;
-//         const data = req.body;
-//         // const product = await Product.findOne({ _id: id });
-
-
-
-//         const product = await Product.findOne({ _id: id });
-//         if (!product) {
-//             return res.status(404).json({ error: "Product not found" });
-//         }
-
-//         const existingProduct = await Product.findOne({
-//             productName: data.productName,
-//             _id: { $ne: id },
-//         });
-
-//         if (existingProduct) {
-//             return res.status(400).json({
-//                 error: "Product with this name already exists. Please try another name",
-//             });
-//         }
-
-//         try {
-//             let sizeQuantities = [];
-        
-//             if (data.sizes) {
-//                 sizeQuantities = JSON.parse(data.sizes);
-        
-//                 // Validate each size and quantity
-//                 sizeQuantities.forEach((size) => {
-//                     if (!size.size || !size.quantity || isNaN(size.quantity)) {
-//                         throw new Error("Invalid size data format.");
-//                     }
-//                 });
-//             }
-        
-//             // Calculate total quantity
-//             const totalQuantity = sizeQuantities.reduce(
-//                 (sum, item) => sum + parseInt(item.quantity, 10),
-//                 0
-//             );
-//         } catch (error) {
-//             console.error("Error parsing sizes:", error);
-//             return res.status(400).json({ error: "Invalid size data format." });
-//         }
-        
-//         const images = [];
-
-//         // Handle cropped image (base64 encoded)
-//         if (data.croppedImages && Array.isArray(data.croppedImages)) {
-//             for (const [index, base64Image] of data.croppedImages.entries()) {
-//                 const matches = base64Image.match(/^data:image\/(png|jpeg);base64,(.+)$/);
-
-//                 if (!matches || matches.length !== 3) {
-//                     return res.status(400).json({
-//                         error: `Invalid image format for image ${index + 1}`,
-//                     });
-//                 }
-
-//                 const imageBuffer = Buffer.from(matches[2], 'base64');
-//                 const filename = `cropped-img-${Date.now()}-${index + 1}.png`;
-//                 const filepath = path.join('public','uploads', filename);
-
-//                 // Ensure the directory exists
-//                 const dir = path.dirname(filepath);
-//                 if (!fs.existsSync(dir)) {
-//                     fs.mkdirSync(dir, { recursive: true });
-//                 }
-
-//                 // Save the image to the public/uploads/cropped directory
-//                 fs.writeFileSync(filepath, imageBuffer);
-//                 images.push(`${filename}`);
-//             }
-//         }
-
-//         const categoryDoc = await Category.findOne({ name: data.category });
-// const categoryId = categoryDoc ? categoryDoc._id : product.category;
-//  console.log("received description:",data.description)
-
-//         const updateFields = {
-//             productName: data.productName,
-//             description: data.description !== undefined && data.description.trim() !== "" ? data.description : product.description,
-//             category: categoryId,
-//             regularPrice: data.regularPrice,
-//             salePrice: data.salePrice,
-//             sizes: sizeQuantities,
-//             quantity: totalQuantity,
-//             color: data.color,
-//             productImage: images.length > 0 ? images : product.productImage, // Use existing images if no new images
-//             status: totalQuantity > 0 ? "Available" : "out of stock",
-//         };
-        
-
-
-//         await Product.findByIdAndUpdate(id, updateFields, { new: true });
-
-//         res.redirect("/admin/products");
-//     } catch (error) {
-//         console.error("Error updating product", error);
-//         res.redirect("/pageerror");
-//     }
-// };
 const getEditProduct = async (req, res) => {
     try {
         const id = req.query.id;
@@ -343,12 +220,13 @@ const editProducts = async (req, res) => {
             productName,
             description,
             regularPrice,
-            salePrice,
+            // salePrice,
             color,
             category,
             brand,
             sizes,
             croppedImages = [],
+            existingImages = []
         } = req.body;
 
         // Validation checks
@@ -358,20 +236,17 @@ const editProducts = async (req, res) => {
 
         // Find existing product
         const product = await Product.findById(id);
+
+        if (product.offer && product.offer.isActive) {
+            const offerPrice = regularPrice - (regularPrice * (product.offer.percentage / 100));
+            salePrice = parseInt(offerPrice);
+        }
+
         if (!product) {
             return res.status(404).json({ error: "Product not found" });
         }
 
-        // Check for duplicate product name
-        const existingProduct = await Product.findOne({
-            productName: productName,
-            _id: { $ne: id }
-        });
-        if (existingProduct) {
-            return res.status(400).json({
-                error: "Product with this name already exists"
-            });
-        }
+        
 
         // Parse and validate sizes
         let sizeQuantities = [];
@@ -402,6 +277,18 @@ const editProducts = async (req, res) => {
         // Calculate total quantity
         const totalQuantity = sizeQuantities.reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
 
+
+        const imagesToDelete = product.productImage.filter(
+            img => !existingImages.includes(img)
+        );
+
+        // Actually delete files from server
+        imagesToDelete.forEach(img => {
+            const imagePath = path.join('public', 'uploads', img);
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        });
         // Process new images
         let updatedImages = [...product.productImage]; // Start with existing images
 
@@ -512,6 +399,134 @@ const unblockProduct = async(req,res)=>{
     }
 }
 
+
+const getOffer = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const product = await Product.findById(productId);
+        
+        if (!product || !product.offer) {
+            return res.status(404).json({ error: "Offer not found" });
+        }
+
+        res.json(product.offer);
+    } catch (error) {
+        console.error("Error fetching offer:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+const addOffer = async (req, res) => {
+    try {
+      const { productId, percentage, startDate, endDate } = req.body;
+      
+      if (!productId || !percentage || !startDate || !endDate) {
+        return res.status(400).json({ error: "All fields are required" });
+      }
+  
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+  
+      const category = await Category.findById(product.category);
+      let categoryOffer = category && category.categoryOffer && category.categoryOffer.isActive
+          ? category.categoryOffer.percentage
+          : 0;
+
+      // Determine the highest offer
+      const highestOffer = Math.max(categoryOffer, percentage);
+
+      // Calculate the final sale price based on the highest offer
+      const offerPrice = product.regularPrice - (product.regularPrice * (highestOffer / 100));
+
+      const offer = {
+        percentage,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        isActive: true
+      };
+  
+      product.offer = offer;
+      product.salePrice = parseInt(offerPrice);
+      
+      await product.save();
+      
+      res.status(200).json({ message: "Offer added successfully" });
+    } catch (error) {
+      console.error("Error adding offer:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+  
+  const editOffer = async (req, res) => {
+    try {
+      const { productId, percentage, startDate, endDate } = req.body;
+      
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+  
+      const category = await Category.findById(product.category);
+        let categoryOffer = category && category.categoryOffer && category.categoryOffer.isActive
+            ? category.categoryOffer.percentage
+            : 0;
+
+        // Determine the highest offer
+        const highestOffer = Math.max(categoryOffer, percentage);
+
+      // Calculate the new offer price
+      const offerPrice = product.regularPrice - (product.regularPrice * (highestOffer / 100));
+
+  
+      product.offer = {
+        percentage,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        isActive: true
+      };
+      product.salePrice = parseInt(offerPrice);
+      
+      await product.save();
+      
+      res.status(200).json({ message: "Offer updated successfully" });
+    } catch (error) {
+      console.error("Error editing offer:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+  
+  const removeOffer = async (req, res) => {
+    try {
+      const { productId } = req.body;
+      
+      const product = await Product.findById(productId);
+      if (!product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+  
+      const category = await Category.findById(product.category);
+      let categoryOffer = category && category.categoryOffer && category.categoryOffer.isActive
+          ? category.categoryOffer.percentage
+          : 0;
+
+      
+      product.offer = undefined;
+      product.salePrice = parseInt(product.regularPrice - (product.regularPrice * (categoryOffer / 100)));
+
+
+      
+      await product.save();
+      
+      res.status(200).json({ message: "Offer removed successfully" });
+    } catch (error) {
+      console.error("Error removing offer:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  };
+  
+
 module.exports = {
     getProductAddPage,
     addProducts,
@@ -520,5 +535,9 @@ module.exports = {
     editProducts,
     deleteSingleImage,
     blockProduct,
-    unblockProduct
+    unblockProduct,
+    getOffer,
+    addOffer,
+    editOffer,
+    removeOffer
 }

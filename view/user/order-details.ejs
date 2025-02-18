@@ -1,3 +1,10 @@
+
+<head>
+    <!-- Include Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+
+
+</head>
 <style>
         body {
             font-family: Arial, sans-serif;
@@ -232,19 +239,58 @@
 
    
 
-<div>
-    <% if (order.status === 'cancelled') { %>
-        <div class="order-cancelled-message">
-            <h2>Order Cancelled</h2>
-            <p>Your order has been successfully cancelled.</p>
-            <a href="/" class="btn">OK</a>
-        </div>
-    <% } else if (order.status !== 'Delivered') { %>
-        <button class="btn cancel-btn" data-order-id="<%= order._id %>">Cancel Order</button>
-    <% } %>
-</div>
-</div>
+    <div>
+        <% if (order.status === 'cancelled') { %>
+            <div class="order-cancelled-message">
+                <h2>Order Cancelled</h2>
+                <p>Your order has been successfully cancelled.</p>
+                <a href="/" class="btn">OK</a>
+            </div>
+        <% } else if (order.status === 'delivered') { %>
+            <button class="btn return-btn" data-order-id="<%= order._id %>">Return Order</button>
+    
+            <!-- Return Reason Modal -->
+            <div class="modal fade" id="returnReasonModal" tabindex="-1" aria-labelledby="returnReasonModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="returnReasonModalLabel">Return Order</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="returnReasonForm">
+                                <div class="mb-3">
+                                    <label for="returnReason" class="form-label">Reason for Return</label>
+                                    <select class="form-select" id="returnReason" required>
+                                        <option value="">Select a reason</option>
+                                        <option value="Wrong Size">Wrong Size</option>
+                                        <option value="Damaged Product">Damaged Product</option>
+                                        <option value="Not as Described">Not as Described</option>
+                                        <option value="Changed Mind">Changed Mind</option>
+                                        <option value="Quality Issue">Quality Issue</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div id="otherReasonContainer" style="display:none;">
+                                    <label for="otherReason" class="form-label">Please specify your reason</label>
+                                    <textarea class="form-control" id="otherReason" rows="3"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="submitReturnBtn">Submit Return Request</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <% } else if (order.status !== 'delivered') { %>
+            <button class="btn cancel-btn" data-order-id="<%= order._id %>">Cancel Order</button>
+        <% } %>
+    </div>
+    </div>
 
+    
 <script>
     document.querySelectorAll('.cancel-btn').forEach(button => {
         button.addEventListener('click', async function () {
@@ -276,6 +322,74 @@
             }
         });
     });
+
+
+    document.querySelectorAll('.return-btn').forEach(button => {
+    button.addEventListener('click', function () {
+        const orderId = this.getAttribute('data-order-id');
+        
+        // Show the return reason modal
+        const returnReasonModal = new bootstrap.Modal(document.getElementById('returnReasonModal'));
+        returnReasonModal.show();
+
+        // Handle other reason textarea
+        const returnReasonSelect = document.getElementById('returnReason');
+        const otherReasonContainer = document.getElementById('otherReasonContainer');
+        const otherReasonTextarea = document.getElementById('otherReason');
+
+        returnReasonSelect.addEventListener('change', function() {
+            otherReasonContainer.style.display = 
+                this.value === 'Other' ? 'block' : 'none';
+        });
+
+        // Submit return request
+        document.getElementById('submitReturnBtn').onclick = async function() {
+            const returnReason = returnReasonSelect.value;
+            const otherReason = otherReasonTextarea.value;
+
+            // Validate reason
+            if (!returnReason) {
+                Swal.fire('Error', 'Please select a return reason', 'error');
+                return;
+            }
+
+            // If 'Other' is selected, ensure additional details are provided
+            if (returnReason === 'Other' && !otherReason.trim()) {
+                Swal.fire('Error', 'Please provide details for "Other" reason', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/return-order/${orderId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        returnReason: returnReason === 'Other' ? otherReason : returnReason 
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire('Submitted!', 'Your return request has been submitted.', 'success')
+                        .then(() => window.location.reload());
+                } else {
+                    Swal.fire('Error!', data.error || 'Failed to submit return request.', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error!', 'An unexpected error occurred.', 'error');
+            }
+        };
+    });
+});
+
 </script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

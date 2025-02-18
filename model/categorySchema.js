@@ -25,9 +25,18 @@ const categorySchema = new mongoose.Schema({
         type:Boolean,
         default:true
     },
-    categoryOffer:{
-        type:Number,
-        default:0
+    categoryOffer: {
+        percentage: {
+            type: Number,
+            min: 1,
+            max: 99
+        },
+        startDate: Date,
+        endDate: Date,
+        isActive: {
+            type: Boolean,
+            default: false
+        }
     },
     createdAt:{
         type:Date,
